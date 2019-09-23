@@ -1,3 +1,5 @@
+import numpy as np
+
 def mean_square_error(y, tx, w):
 	e = y - tx@w
 	N = tx.shape[0]
@@ -7,7 +9,11 @@ def mean_square_error(y, tx, w):
 	
 	
 def mean_absolute_error():
-	return None
+	e = y - tx@w
+	N = tx.shape[0]
+	loss = np.sum(np.absolute(e))/N
+	loss_gradient = None
+	return (loss, gradient)
 	
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
