@@ -108,14 +108,14 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 		the last weight vector of the method, 
 		and the corresponding loss value (cost function)
 	"""
-    w_temp = initial_w
+    w = initial_w
     for i in range(max_iters):
-        loss, loss_gradient = mean_square_error(y, tx, w_temp)
+        loss, loss_gradient = mean_square_error(y, tx, w)
         random_data_row = np.random(range(tx.shape[0]))
-        e = (y - tx@w_temp)[random_data_row]
+        e = (y - tx@w)[random_data_row]
         Ln_grad = -2*e*tx[random_data_row]
-        w_temp = w_temp - gamma * Ln_grad
-	return (w_temp, loss)
+        w = w - gamma * Ln_grad
+	return (w, loss)
 	
 	
 def least_squares(y, tx):
