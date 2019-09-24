@@ -1,6 +1,25 @@
 import numpy as np
 
 def mean_square_error(y, tx, w):
+	"""
+	Mean square error (MSE) cost function.
+	Pros: convex, 
+	Cons:
+		
+	Parameters
+	----------
+	y: vector
+		The outputs
+	tx: vector
+		The inputs
+	w: vector
+		The weight vector
+		
+	Returns
+	-------
+	(loss, loss_gradient):
+		TODO
+	"""
 	e = y - tx@w
 	N = tx.shape[0]
 	loss = (e.T@e)/(2*N)
@@ -8,12 +27,31 @@ def mean_square_error(y, tx, w):
 	return (loss, loss_gradient)
 	
 	
-def mean_absolute_error():
+def mean_absolute_error(y, tx, w):
+	"""
+	Mean absolute error (MAE) cost function.
+	Pros: convex, 
+	Cons:
+	
+	Parameters
+	----------
+	y: vector
+		The outputs
+	tx: vector
+		The inputs
+	w: vector
+		The weight vector
+		
+	Returns
+	-------
+	(loss, loss_gradient):
+		TODO
+	"""
 	e = y - tx@w
 	N = tx.shape[0]
 	loss = np.sum(np.absolute(e))/N
-	loss_gradient = None
-	return (loss, gradient)
+	loss_gradient = None  # TODO
+	return (loss, loss_gradient)
 	
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
@@ -35,21 +73,40 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 		
 	Returns
 	-------
-	tupple
-			(w, loss) the last weight vector of the method, 
-			and the corresponding loss value (cost function)
+	(w, loss):
+		the last weight vector of the method, 
+		and the corresponding loss value (cost function)
 	"""
 	
-	w_temp = initial_w
+	w = initial_w
 	for i in range(max_iters):
-		loss, loss_gradient = mean_square_error(y, tx, w_temp)
-		w_temp = w_temp - gamma*loss_gradient
-	return (w_temp, loss)
+		loss, loss_gradient = mean_square_error(y, tx, w)
+		w = w - gamma*loss_gradient
+	return (w, loss)
 	
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 	"""
 	Linear regression using stochastic gradient descent.
+	
+	Parameters
+	----------
+	y: vector
+		The outputs
+	tx: vector
+		The inputs
+	initial_w: vector
+		The initial weight vector
+	max_iters: int
+		The number of steps to run
+	gamma: double
+		The step-size (>0)
+		
+	Returns
+	-------
+	(w, loss):
+		the last weight vector of the method, 
+		and the corresponding loss value (cost function)
 	"""
     w_temp = initial_w
     for i in range(max_iters):
@@ -64,6 +121,19 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 def least_squares(y, tx):
 	"""
 	Linear squares regression using normal equations.
+	
+	Parameters
+	----------
+	y: vector
+		The outputs
+	tx: vector
+		The inputs
+		
+	Returns
+	-------
+	(w, loss):
+		the last weight vector of the method, 
+		and the corresponding loss value (cost function)
 	"""
     tx_T = tx.T
     w = linalg.inv(tx_T @ tx) @ tx_T @ y   " ??? Verifiy l'inveritibility ???
