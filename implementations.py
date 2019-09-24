@@ -43,7 +43,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 	w_temp = initial_w
 	for i in range(max_iters):
 		loss, loss_gradient = mean_square_error(y, tx, w_temp)
-		w = w_temp - gamma*loss_gradient
+		w_temp = w_temp - gamma*loss_gradient
 	return (w_temp, loss)
 	
 
@@ -51,14 +51,24 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 	"""
 	Linear regression using stochastic gradient descent.
 	"""
-	return None
+    w_temp = initial_w
+    for i in range(max_iters):
+        loss, loss_gradient = mean_square_error(y, tx, w_temp)
+        random_data_row = np.random(range(tx.shape[0]))
+        e = (y - tx@w_temp)[random_data_row]
+        Ln_grad = -2*e*tx[random_data_row]
+        w_temp = w_temp - gamma * Ln_grad
+	return (w_temp, loss)
 	
 	
 def least_squares(y, tx):
 	"""
 	Linear squares regression using normal equations.
 	"""
-	return None
+    tx_T = tx.T
+    w = linalg.inv(tx_T @ tx) @ tx_T @ y   " ??? Verifiy l'inveritibility ???
+    loss, loss_gradient = mean_square_error(y, tx, w)
+	return (w, loss)
 	
 
 def ridge_regression(y, tx, initial_w, max_iters, gamma):
