@@ -166,8 +166,8 @@ def logistic_regression_GD(y, tx, initial w, max_iters, gamma):
     loss, _ = mean_square_error(y, tx, w_temp)
     return (w,loss)
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-	"""
+def logistic_regression_SGD(y, tx, initial w, max_iters, gamma):
+    """
 	Regularized logistic regression using gradient descent.
 	"""
     w_temp = initial_w
@@ -180,6 +180,16 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = w_temp    
     loss, _ = mean_square_error(y, tx, w)
 	return (w,loss)
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    w_temp = initial_w
+    for i in range(max_iters):
+        e = y - tx@w_temp
+        N = tx.shape[0]
+        loss_gradient = -(tx.T@e)/N + lambda_*w_temp
+        w_temp = w_temp - gamma * loss_gradient
+    return (w,loss)
+
 
 def logistic_function(z):
     return np.exp(z)/(1 + np.exp(z))
