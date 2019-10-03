@@ -188,6 +188,8 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         N = tx.shape[0]
         loss_gradient = -(tx.T@e)/N + lambda_*w_temp
         w_temp = w_temp - gamma * loss_gradient
+    w = w_temp    
+    loss, _ = mean_square_error(y, tx, w)  
     return (w,loss)
 
 
