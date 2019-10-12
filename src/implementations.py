@@ -6,7 +6,7 @@ def mean_square_error(y, tx, w):
     N = tx.shape[0]
     loss = (e.T @ e) / (2 * N)
     loss_gradient = -(tx.T @ e) / N
-    return (loss, loss_gradient)
+    return loss, loss_gradient
 
 
 def mean_absolute_error(y, tx, w):
@@ -33,7 +33,7 @@ def mean_absolute_error(y, tx, w):
     N = tx.shape[0]
     loss = np.sum(np.absolute(e)) / N
     loss_gradient = None  # TODO
-    return (loss, loss_gradient)
+    return loss, loss_gradient
 
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
@@ -41,7 +41,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     for i in range(max_iters):
         loss, loss_gradient = mean_square_error(y, tx, w)
         w = w - gamma * loss_gradient
-    return (w, loss)
+    return w, loss
 
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
