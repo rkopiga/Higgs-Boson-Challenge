@@ -2,6 +2,25 @@ import numpy as np
 import src.params as params
 
 
+def replace_unwanted_value_by_mean(tX, unwanted_value):
+    features = tX.T
+    mask = features == unwanted_value
+    features_new = np.ma.array(features, mask=mask)
+    means = np.mean(features_new, axis=1)
+    for i in range(len(features)):
+        a = features_new[i]
+        a[a == unwanted_value] = means[i]
+        features[i] = a
+    return features.T
+
+
+def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(replace_unwanted_value_by_mean(tX_grouped[i], unwanted_value))
+    return tX_grouped_new
+
+
 def data_separation_1(y, tX, ids, unwanted_value):
     """
     Separate the dataset into groups according to the appearance of the unwanted value in each data point.
