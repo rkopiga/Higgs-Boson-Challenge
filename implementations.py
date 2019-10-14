@@ -44,13 +44,12 @@ def mean_absolute_error(y, tx, w):
 		
 	Returns
 	-------
-	(loss, loss_gradient):
-		TODO
+	(loss, loss_gradient)
 	"""
 	e = y - tx@w
 	N = tx.shape[0]
 	loss = np.sum(np.absolute(e))/N
-	loss_gradient = None  # TODO
+	loss_gradient = -1/N*(tx.T@np.sign(e))
 	return (loss, loss_gradient)
 	
 
