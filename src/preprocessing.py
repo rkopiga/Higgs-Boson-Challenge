@@ -1,6 +1,45 @@
 import numpy as np
 import src.params as params
 
+"""
+Preprocess the data set
+"""
+
+
+def preprocess(y, tX, ids, unwanted_value,
+               group_1=False,
+               group_2=False,
+               replace_unwanted_value=False,
+               remove_inv_features=False,
+               std=False):
+    """
+    Preprocess the dataset
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    if group_1:
+        y, tX, ids, masks, counts = data_separation_1(y, tX, ids, unwanted_value)
+    elif group_2:
+        y, tX, ids, masks, counts = data_separation_2(y, tX, ids)
+    else:
+        masks = None
+        counts = None
+
+    if replace_unwanted_value:
+        tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
+
+    if remove_inv_features:
+        tX = remove_invariable_features(tX)
+
+    if std:
+        tX = standardize(tX)
+
+    return y, tX, ids, masks, counts
+
 
 def replace_unwanted_value_by_mean(tX, unwanted_value):
     features = tX.T
@@ -99,7 +138,6 @@ def data_separation_2(y, tX, ids):
     ids_grouped = []
     for i in range(params.PRI_jet_num_max_value + 1):
         condition = (tX.T[params.PRI_jet_num_index] == i)
-        print(len(condition))
         masks.append(condition)
 
         counts.append(np.sum(condition))
