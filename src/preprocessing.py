@@ -1,9 +1,10 @@
 import numpy as np
+import src.params as params
 
 
-def data_separation(y, tX, ids, unwanted_value):
+def data_separation_1(y, tX, ids, unwanted_value):
     """
-    Separates the dataset into groups according to the appearance of the unwanted value in each data point.
+    Separate the dataset into groups according to the appearance of the unwanted value in each data point.
 
     Parameters
     ----------
@@ -31,50 +32,70 @@ def data_separation(y, tX, ids, unwanted_value):
     unwanted_value_check = 1 * (tX == unwanted_value)
     masks, indices, counts = np.unique(unwanted_value_check, return_inverse=True, return_counts=True, axis=0)
 
-    max_index = max(indices)
     y_grouped = []
     tX_grouped = []
     ids_grouped = []
-    n_data_points = len(tX)
-    for i in range(max_index + 1):
+    for i in range(max(indices) + 1):
         condition = (indices == i)
+
         y_grouped.append(np.extract(condition, y))
         ids_grouped.append(np.extract(condition, ids))
 
-        indices_to_take = np.extract(condition, range(n_data_points))
+        indices_to_take = np.extract(condition, range(len(tX)))
         tX_grouped.append(np.take(tX, indices_to_take, axis=0))
 
     return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
-def drop_features(tX_grouped, masks):
+def data_separation_2(y, tX, ids):
     """
-    In each group of data points, drop the features/columns that contain only UNWANTED_VALUEs.
+        Separate the dataset into groups according to the value of the feature PRI_jet_column (also called PRI_jet_num).
 
-    Parameters
-    ----------
-    tX_grouped: array of arrays of data points
-        The features matrix grouped
-    masks: 2D-matrix
-        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
+        Parameters
+        ----------
+        y: array
+            The labels
+        tX: 2D-matrix
+            The features matrix
+        ids: array
+            The ids of the data points
 
-    Returns
-    -------
-    tX_grouped_clean: array of arrays of data points
-       The features matrix grouped and cleaned of every UNWANTED_VALUE
-    """
+        Returns
+        -------
+        y_grouped: 2D-array
+            The labels grouped
+        tX_grouped: object (array of arrays of data points)
+            The features matrix grouped
+        ids_grouped: 2D-array
+            The data points' ids grouped
+        masks: 2D-matrix
+            The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
+        counts: array
+            The number of data points belonging to each group
+        """
+    masks = []
+    counts = []
+    y_grouped = []
+    tX_grouped = []
+    ids_grouped = []
+    for i in range(params.PRI_jet_num_max_value + 1):
+        condition = (tX.T[params.PRI_jet_num_index] == i)
+        print(len(condition))
+        masks.append(condition)
 
-    tX_grouped_clean = []
-    for i in range(len(tX_grouped)):
-        temp = tX_grouped[i].T
-        temp = np.delete(temp, np.where(masks[i] == 1), 0)
-        tX_grouped_clean.append(temp.T)
-    return tX_grouped_clean
+        counts.append(np.sum(condition))
+        y_grouped.append(np.extract(condition, y))
+        ids_grouped.append(np.extract(condition, ids))
+
+        indices_to_take = np.extract(condition, range(len(tX)))
+        tX_grouped.append(np.take(tX, indices_to_take, axis=0))
+
+    return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
 def remove_invariable_features(tX_grouped):
     """
-    In each group of data points, drop the features/columns that never change.
+    In each group of data points, drop the features/columns that never change (including the UNWANTED_VALUE)
 
     Parameters
     ----------
