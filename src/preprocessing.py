@@ -11,11 +11,11 @@ def preprocess(
     tX,
     ids,
     unwanted_value=params.UNWANTED_VALUE,
-    group_1=params.group_1,
-    group_2=params.group_2,
-    replace_unwanted_value=params.replace_unwanted_value,
-    remove_inv_features=params.remove_inv_features,
-    std=params.std
+    group_1=params.GROUP_1,
+    group_2=params.GROUP_2,
+    replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
+    remove_inv_features=params.REMOVE_INV_FEATURES,
+    std=params.STD
 ):
     """
     Preprocess the dataset

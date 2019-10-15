@@ -6,8 +6,15 @@ PRI_jet_num_max_value = 3
 PRI_jet_num_index = 22  # when starting at 0
 
 # Preprocessing parameters
-group_1 = False
-group_2 = True
-replace_unwanted_value=True
-remove_inv_features=True
-std=False
+GROUP_1 = False
+GROUP_2 = True
+REPLACE_UNWANTED_VALUE=True
+REMOVE_INV_FEATURES=True
+STD=False
+
+# Feature engineering parameters
+DEGREES = [2, 3, 7]
+
+# Cross validation parameters
+SUB_TEST_SETS = True
+RATIO = 3/4
