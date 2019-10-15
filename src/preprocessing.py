@@ -10,14 +10,12 @@ def preprocess(
     y,
     tX,
     ids,
-    unwanted_value=None,
-    group_1=False,
-    group_2=False,
-    replace_unwanted_value=False,
-    replace_unwanted_value_grouped=False,
-    remove_inv_features_grouped=False,
-    remove_inv_features=False,
-    std=False,
+    unwanted_value=params.UNWANTED_VALUE,
+    group_1=params.group_1,
+    group_2=params.group_2,
+    replace_unwanted_value=params.replace_unwanted_value,
+    remove_inv_features=params.remove_inv_features,
+    std=params.std
 ):
     """
     Preprocess the dataset
@@ -34,12 +32,8 @@ def preprocess(
         Rather we split the dataset with the split function 1 or not
     group_2: boolean
         Rather we split the dataset with the split function 2 or not
-    replace_unwanted_value_grouped: boolean
-        Rather we replace all the unwanted values by the mean of the remaining values in each feature of each group or not
     replace_unwanted_value: boolean
         Rather we replace all the unwanted values by the mean of the remaining values in each feature or not
-    remove_inv_features_grouped: boolean
-        Rather we remove all the invariable features in each group or not
     remove_inv_features: boolean
         Rather we remove all the invariable features or not
     std: boolean
@@ -59,79 +53,29 @@ def preprocess(
     counts: array
         The number of data points belonging to each group or None depending on the chosen split function
     """
-    if group_1:
-        y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
-    elif group_2:
-        y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
+    
+    if group_1 or group_2:
+        if group_1:
+            y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
+        elif group_2:
+            y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
+        if replace_unwanted_value:
+            tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
+        if remove_inv_features:
+            tX = remove_invariable_features_grouped(tX)
+        if std:
+            tX = standardize_grouped(tX)
     else:
         masks = None
         counts = None
-
-    if replace_unwanted_value:
-        tX = replace_unwanted_value_by_mean(tX, unwanted_value)
-
-    if replace_unwanted_value_grouped:
-        tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
-
-    if remove_inv_features:
-        tX = remove_invariable_features(tX)
-
-    if remove_inv_features_grouped:
-        tX = remove_invariable_features_grouped(tX)
-
-    if std:
-        tX = standardize(tX)
+        if replace_unwanted_value:
+            tX = replace_unwanted_value_by_mean(tX, unwanted_value)
+        if remove_inv_features:
+            tX = remove_invariable_features(tX)
+        if std:
+            tX = standardize(tX)
 
     return y, tX, ids, masks, counts
-
-
-def replace_unwanted_value_by_mean(tX, unwanted_value):
-    """
-    In each feature, replace the unwanted value by the mean of the remaining values.
-
-    Parameters
-    ----------
-    tX: 2D-array
-        The features matrix
-    unwanted_value: float
-        The specific value we want to replace
-
-    Returns
-    -------
-    The new matrix tX after replacing the unwanted value with the mean of the remaining features.
-    """
-    features = tX.T
-    mask = features == unwanted_value
-    features_new = np.ma.array(features, mask=mask)
-    means = np.mean(features_new, axis=1)
-    for i in range(len(features)):
-        a = features_new[i]
-        a[a == unwanted_value] = means[i]
-        features[i] = a
-    return features.T
-
-
-def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
-    """
-    For each group and in each feature, replace the unwanted value by the mean of the remaining values in that features.
-
-    Parameters
-    ----------
-    tX_grouped: list of arrays of data points
-        The features matrix grouped
-    unwanted_value: float
-        The specific value we want to replace
-
-    Returns
-    -------
-    The new matrix tX_grouped after replacing the unwanted value with the mean of the remaining features in each group.
-    """
-    tX_grouped_new = []
-    for i in range(len(tX_grouped)):
-        tX_grouped_new.append(
-            replace_unwanted_value_by_mean(tX_grouped[i], unwanted_value)
-        )
-    return tX_grouped_new
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):
@@ -263,6 +207,54 @@ def split_in_groups_2(y, tX, ids):
         counts,
     )
 
+
+def replace_unwanted_value_by_mean(tX, unwanted_value):
+    """
+    In each feature, replace the unwanted value by the mean of the remaining values.
+
+    Parameters
+    ----------
+    tX: 2D-array
+        The features matrix
+    unwanted_value: float
+        The specific value we want to replace
+
+    Returns
+    -------
+    The new matrix tX after replacing the unwanted value with the mean of the remaining features.
+    """
+    features = tX.T
+    mask = features == unwanted_value
+    features_new = np.ma.array(features, mask=mask)
+    means = np.mean(features_new, axis=1)
+    for i in range(len(features)):
+        a = features_new[i]
+        a[a == unwanted_value] = means[i]
+        features[i] = a
+    return features.T
+
+
+def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
+    """
+    For each group and in each feature, replace the unwanted value by the mean of the remaining values in that features.
+
+    Parameters
+    ----------
+    tX_grouped: list of arrays of data points
+        The features matrix grouped
+    unwanted_value: float
+        The specific value we want to replace
+
+    Returns
+    -------
+    The new matrix tX_grouped after replacing the unwanted value with the mean of the remaining features in each group.
+    """
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(
+            replace_unwanted_value_by_mean(tX_grouped[i], unwanted_value)
+        )
+    return tX_grouped_new
 
 def remove_invariable_features(tX):
     """
