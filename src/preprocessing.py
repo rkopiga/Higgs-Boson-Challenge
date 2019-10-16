@@ -1,9 +1,68 @@
 import numpy as np
+import params as params
+
+"""
+Preprocess the data set
+"""
 
 
-def data_separation(y, tX, ids, unwanted_value):
+def preprocess(y, tX, ids, unwanted_value,
+               group_1=False,
+               group_2=False,
+               replace_unwanted_value=False,
+               remove_inv_features=False,
+               std=False):
     """
-    Separates the dataset into groups according to the appearance of the unwanted value in each data point.
+    Preprocess the dataset
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    if group_1:
+        y, tX, ids, masks, counts = data_separation_1(y, tX, ids, unwanted_value)
+    elif group_2:
+        y, tX, ids, masks, counts = data_separation_2(y, tX, ids)
+    else:
+        masks = None
+        counts = None
+
+    if replace_unwanted_value:
+        tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
+
+    if remove_inv_features:
+        tX = remove_invariable_features(tX)
+
+    if std:
+        tX = standardize(tX)
+
+    return y, tX, ids, masks, counts
+
+
+def replace_unwanted_value_by_mean(tX, unwanted_value):
+    features = tX.T
+    mask = features == unwanted_value
+    features_new = np.ma.array(features, mask=mask)
+    means = np.mean(features_new, axis=1)
+    for i in range(len(features)):
+        a = features_new[i]
+        a[a == unwanted_value] = means[i]
+        features[i] = a
+    return features.T
+
+
+def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(replace_unwanted_value_by_mean(tX_grouped[i], unwanted_value))
+    return tX_grouped_new
+
+
+def data_separation_1(y, tX, ids, unwanted_value):
+    """
+    Separate the dataset into groups according to the appearance of the unwanted value in each data point.
 
     Parameters
     ----------
@@ -31,50 +90,69 @@ def data_separation(y, tX, ids, unwanted_value):
     unwanted_value_check = 1 * (tX == unwanted_value)
     masks, indices, counts = np.unique(unwanted_value_check, return_inverse=True, return_counts=True, axis=0)
 
-    max_index = max(indices)
     y_grouped = []
     tX_grouped = []
     ids_grouped = []
-    n_data_points = len(tX)
-    for i in range(max_index + 1):
+    for i in range(max(indices) + 1):
         condition = (indices == i)
+
         y_grouped.append(np.extract(condition, y))
         ids_grouped.append(np.extract(condition, ids))
 
-        indices_to_take = np.extract(condition, range(n_data_points))
+        indices_to_take = np.extract(condition, range(len(tX)))
         tX_grouped.append(np.take(tX, indices_to_take, axis=0))
 
     return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
-def drop_features(tX_grouped, masks):
+def data_separation_2(y, tX, ids):
     """
-    In each group of data points, drop the features/columns that contain only UNWANTED_VALUEs.
+        Separate the dataset into groups according to the value of the feature PRI_jet_column (also called PRI_jet_num).
 
-    Parameters
-    ----------
-    tX_grouped: array of arrays of data points
-        The features matrix grouped
-    masks: 2D-matrix
-        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
+        Parameters
+        ----------
+        y: array
+            The labels
+        tX: 2D-matrix
+            The features matrix
+        ids: array
+            The ids of the data points
 
-    Returns
-    -------
-    tX_grouped_clean: array of arrays of data points
-       The features matrix grouped and cleaned of every UNWANTED_VALUE
-    """
+        Returns
+        -------
+        y_grouped: 2D-array
+            The labels grouped
+        tX_grouped: object (array of arrays of data points)
+            The features matrix grouped
+        ids_grouped: 2D-array
+            The data points' ids grouped
+        masks: 2D-matrix
+            The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
+        counts: array
+            The number of data points belonging to each group
+        """
+    masks = []
+    counts = []
+    y_grouped = []
+    tX_grouped = []
+    ids_grouped = []
+    for i in range(params.PRI_jet_num_max_value + 1):
+        condition = (tX.T[params.PRI_jet_num_index] == i)
+        masks.append(condition)
 
-    tX_grouped_clean = []
-    for i in range(len(tX_grouped)):
-        temp = tX_grouped[i].T
-        temp = np.delete(temp, np.where(masks[i] == 1), 0)
-        tX_grouped_clean.append(temp.T)
-    return tX_grouped_clean
+        counts.append(np.sum(condition))
+        y_grouped.append(np.extract(condition, y))
+        ids_grouped.append(np.extract(condition, ids))
+
+        indices_to_take = np.extract(condition, range(len(tX)))
+        tX_grouped.append(np.take(tX, indices_to_take, axis=0))
+
+    return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
 def remove_invariable_features(tX_grouped):
     """
-    In each group of data points, drop the features/columns that never change.
+    In each group of data points, drop the features/columns that never change (including the UNWANTED_VALUE)
 
     Parameters
     ----------
@@ -124,7 +202,24 @@ def standardize(tX_grouped):
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    polynomial_basis = []
-    for i in range(len(x)):
-        polynomial_basis.append([(x[i])**d for d in range(degree+1)])                
-    return np.array(polynomial_basis)
+    a = [np.power(x,d) for d in range(2,degree+1)]
+    return np.asarray(a)
+
+def shuffle_data(y,tX,ids):
+    y = y.reshape(y.shape[0],1)
+    ids = ids.reshape(ids.shape[0],1)
+    model_data = np.hstack((tX,y,ids))
+    np.random.shuffle(model_data)
+    ids_shuffled = model_data[:,model_data.shape[1]-1]
+    y_shuffled = model_data[:,model_data.shape[1]-2]
+    tX_shuffled = model_data[:,:model_data.shape[1]-2]
+    return tX_shuffled, y_shuffled, ids_shuffled
+
+def separate_data(tX,y,ratio):
+    length = len(tX)
+    train_set_index = (int)(length * ratio)
+    train_set = tX_shuffled[:train_set_index]
+    train_label = y_shuffled[:train_set_index]
+    test_set = tX_shuffled[train_set_index:]
+    test_label =y_shuffled[train_set_index:] 
+    return train_set, train_label, test_set, test_label
