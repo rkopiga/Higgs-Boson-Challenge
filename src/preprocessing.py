@@ -10,6 +10,7 @@ def preprocess(
     y,
     tX,
     ids,
+    shuffle_data = params.SHUFFLE_DATA,
     unwanted_value=params.UNWANTED_VALUE,
     group_1=params.GROUP_1,
     group_2=params.GROUP_2,
@@ -53,6 +54,9 @@ def preprocess(
     counts: array
         The number of data points belonging to each group or None depending on the chosen split function
     """
+
+    if shuffle_data:
+        y, tX, ids = shuffle_data(y, tX, ids)
     
     if group_1 or group_2:
         if group_1:
@@ -76,6 +80,17 @@ def preprocess(
             tX = standardize(tX)
 
     return y, tX, ids, masks, counts
+
+
+def shuffle_data(y, tX, ids):
+    y = y.reshape(y.shape[0], 1)
+    ids = ids.reshape(ids.shape[0], 1)
+    model_data = np.hstack((tX, y, ids))
+    np.random.shuffle(model_data)
+    ids_shuffled = model_data[:, model_data.shape[1]-1]
+    y_shuffled = model_data[:, model_data.shape[1]-2]
+    tX_shuffled = model_data[:, :model_data.shape[1]-2]
+    return tX_shuffled, y_shuffled, ids_shuffled
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):
@@ -256,6 +271,7 @@ def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
         )
     return tX_grouped_new
 
+
 def remove_invariable_features(tX):
     """
     Drop the features/columns that never change.
@@ -316,6 +332,7 @@ def standardize(tX):
     stds = np.reshape(np.std(features, axis=1), [features_len, 1])
     features_std = (features - means) / stds
     return features_std.T
+
 
 def standardize_grouped(tX_grouped):
     """
