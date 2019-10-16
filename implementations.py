@@ -9,38 +9,38 @@ def mean_square_error(y, tx, w):
     
     
 def mean_absolute_error(y, tx, w):
-	"""
-	Mean absolute error (MAE) cost function.
-	Pros: convex, 
-	Cons:
-	
-	Parameters
-	----------
-	y: vector
-		The outputs
-	tx: vector
-		The inputs
-	w: vector
-		The weight vector
-		
-	Returns
-	-------
-	(loss, loss_gradient)
-	"""
-	e = y - tx@w
-	N = tx.shape[0]
-	loss = np.sum(np.absolute(e))/N
-	loss_gradient = -1/N*(tx.T@np.sign(e))
-	return (loss, loss_gradient)
-	
+    """
+    Mean absolute error (MAE) cost function.
+    Pros: convex, 
+    Cons:
+    
+    Parameters
+    ----------
+    y: vector
+        The outputs
+    tx: vector
+        The inputs
+    w: vector
+        The weight vector
+
+    Returns
+    -------
+    (loss, loss_gradient)
+    """
+    e = y - tx@w
+    N = tx.shape[0]
+    loss = np.sum(np.absolute(e))/N
+    loss_gradient = -1/N*(tx.T@np.sign(e))
+    return (loss, loss_gradient)
+    
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-	w = initial_w
-	for i in range(max_iters):
-		loss, loss_gradient = mean_square_error(y, tx, w)
-		w = w - gamma*loss_gradient
-	return (w, loss)
-	
+    w = initial_w
+    for i in range(max_iters):
+        loss, loss_gradient = mean_square_error(y, tx, w)
+        w = w - gamma*loss_gradient
+    return (w, loss)
+    
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     w_temp = initial_w
@@ -106,8 +106,8 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         N = tx.shape[0]
         loss_gradient = -(tx.T@e)/N + lambda_*w_temp
         w_temp = w_temp - gamma * loss_gradient
-    w = w_temp    
-    loss, _ = mean_square_error(y, tx, w)  
+    w = w_temp
+    loss, _ = mean_square_error(y, tx, w)
     return w,loss
 
 

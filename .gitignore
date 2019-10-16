@@ -1,3 +1,7 @@
 .DS_Store
 data/*
 *.ipynb
+*.pdf
+*.csv
+__pycache__/*
+.pynb_checkpoints/*
