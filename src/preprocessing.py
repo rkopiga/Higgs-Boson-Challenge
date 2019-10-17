@@ -10,7 +10,7 @@ def preprocess(
     y,
     tX,
     ids,
-    shuffle_data = params.SHUFFLE_DATA,
+    shuffle = params.SHUFFLE_DATA,
     unwanted_value=params.UNWANTED_VALUE,
     group_1=params.GROUP_1,
     group_2=params.GROUP_2,
@@ -55,7 +55,7 @@ def preprocess(
         The number of data points belonging to each group or None depending on the chosen split function
     """
 
-    if shuffle_data:
+    if shuffle:
         y, tX, ids = shuffle_data(y, tX, ids)
     
     if group_1 or group_2:
@@ -90,7 +90,7 @@ def shuffle_data(y, tX, ids):
     ids_shuffled = model_data[:, model_data.shape[1]-1]
     y_shuffled = model_data[:, model_data.shape[1]-2]
     tX_shuffled = model_data[:, :model_data.shape[1]-2]
-    return tX_shuffled, y_shuffled, ids_shuffled
+    return y_shuffled, tX_shuffled, ids_shuffled
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):
