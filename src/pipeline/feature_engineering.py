@@ -1,4 +1,4 @@
-from src.proj1_helpers import *
+from src.pipeline.proj1_helpers import *
 from src.params import *
 
 

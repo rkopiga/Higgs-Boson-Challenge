@@ -1,4 +1,4 @@
-from src.implementations import *
+from src.pipeline.implementations import *
 
 
 def find_optimal_ws_LS_in_groups(tX_preprocessed, y_preprocessed):
