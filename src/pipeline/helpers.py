@@ -3,3 +3,4 @@ def flatten_list(list_to_flatten):
     for sublist in list_to_flatten:
         for item in sublist:
             flat_list.append(item)
+    return flat_list
