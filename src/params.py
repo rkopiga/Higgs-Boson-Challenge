@@ -3,16 +3,16 @@ DATA_TRAIN_PATH = '../../data/train.csv'
 DATA_TEST_PATH = '../../data/test.csv'
 OUTPUT_PATH = '../../data/output.csv'
 
-# Used to group the data according to that value and to replace it by an appropriate value
+# /!\ DO NOT CHANGE VALUES BELOW /!\
 UNWANTED_VALUE = -999
+PRI_jet_num_max_value = 3
+PRI_jet_num_index = 22
+# /!\ -------------------------- /!\
 
 # Preprocessing parameters
 SHUFFLE_DATA = True
 GROUP_1 = True
 GROUP_2 = False
-# Used to group the data according to the PRI_jet_num feature
-PRI_jet_num_max_value = 3
-PRI_jet_num_index = 22
 GROUP = GROUP_1 or GROUP_2
 REPLACE_UNWANTED_VALUE = True
 REMOVE_INV_FEATURES = True
