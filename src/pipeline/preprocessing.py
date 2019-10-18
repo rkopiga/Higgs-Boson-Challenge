@@ -55,6 +55,9 @@ def preprocess(
         The number of data points belonging to each group or None depending on the chosen split function
     """
 
+    masks = None
+    counts = None
+
     if shuffle:
         y, tX, ids = shuffle_data(y, tX, ids)
     
@@ -63,6 +66,18 @@ def preprocess(
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
             y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
+            if params.DEBUG:
+                masks_check = []
+                counts_check = []
+                for i in range(len(tX)):
+                    unwanted_value_check = 1 * (tX[i] == unwanted_value)
+                    masks_and_counts = np.unique(unwanted_value_check, return_counts=True, axis=0)
+                    masks_check.append(masks_and_counts[0])
+                    counts_check.append(masks_and_counts[1])
+                print(masks_check)
+                print(counts_check)
+            if params.ADDITIONAL_SPLITTING:
+                y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
         if replace_unwanted_value:
             tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
         if remove_inv_features:
@@ -70,8 +85,6 @@ def preprocess(
         if std:
             tX = standardize_grouped(tX)
     else:
-        masks = None
-        counts = None
         if replace_unwanted_value:
             tX = replace_unwanted_value_by_mean(tX, unwanted_value)
         if remove_inv_features:
@@ -221,6 +234,19 @@ def split_in_groups_2(y, tX, ids):
         masks,
         counts,
     )
+
+
+def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
+    y_grouped_new, tX_grouped_new, ids_grouped_new, masks_new, counts_new = [], [], [], [], []
+    for i in range(len(tX_grouped)):
+        y, tX, ids, masks, counts = split_in_groups_1(y_grouped[i], tX_grouped[i], ids_grouped[i], unwanted_value)
+        for j in range(len(tX)):
+            y_grouped_new.append(y[j])
+            tX_grouped_new.append(tX[j])
+            ids_grouped_new.append(ids[j])
+            masks_new.append(masks[j])
+            counts_new.append(counts[j])
+    return y_grouped_new, tX_grouped_new, ids_grouped_new, masks_new, counts_new
 
 
 def replace_unwanted_value_by_mean(tX, unwanted_value):
