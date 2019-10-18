@@ -38,6 +38,7 @@ def mean_absolute_error(y, tx, w):
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     w = initial_w
+    loss = None
     for i in range(max_iters):
         loss, loss_gradient = mean_square_error(y, tx, w)
         w = w - gamma * loss_gradient
@@ -47,6 +48,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     w_temp = initial_w
     batch_size = 1
+    loss = None
     for i in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
             gradient, _ = compute_stoch_gradient(y_batch, tx_batch, w_temp)
@@ -83,6 +85,7 @@ def logistic_function(z):
     Computes logistic function of scalar or array
     """
     return np.exp(z)/(1 + np.exp(z))
+
 
 def logistic_loss(y, tx, w, regulator):
     """
@@ -148,10 +151,11 @@ def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
     """
     w_temp = initial_w
     batch_size = 1
+    loss_gradient = None
     for i in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
             gradient = tx
-            loss_gradient = tx_n * (logistic_function(np.dot(tx_n, y_n)) - y_n)
+            loss_gradient = tx_batch * (logistic_function(np.dot(tx_batch, y_batch)) - y_batch)
         w_temp = w_temp - gamma * loss_gradient
     w = w_temp
     loss, _ = mean_square_error(y, tx, w)
