@@ -29,3 +29,8 @@ ONE_COLUMN = False
 # Local prediction parameters
 LOCAL_PREDICTION = True
 RATIO = 8/10
+
+# Ridge regression parameters
+MAX_ITERS = None
+GAMMA = None
+REGULATOR = None
