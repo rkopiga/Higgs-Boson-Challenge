@@ -13,15 +13,15 @@ PRI_jet_num_index = 22
 # Preprocessing parameters
 SHUFFLE_DATA = True
 GROUP_1 = False
-GROUP_2 = True
+GROUP_2 = False
 GROUP = GROUP_1 or GROUP_2
 ADDITIONAL_SPLITTING = True
-REPLACE_UNWANTED_VALUE = True
+REPLACE_UNWANTED_VALUE = False
 REMOVE_INV_FEATURES = True
-STD = False
+STD = True
 
 # Feature engineering parameters
-FEATURE_EXPANSION = True
+FEATURE_EXPANSION = False
 DEGREE = 2
 MULTIPLICATION_COMBINATIONS = 3
 ONE_COLUMN = False
@@ -30,7 +30,8 @@ ONE_COLUMN = False
 LOCAL_PREDICTION = True
 RATIO = 8/10
 
-# Ridge regression parameters
-MAX_ITERS = None
-GAMMA = None
-REGULATOR = None
+# Implementations parameters
+LOGISTIC_MODEL = True
+MAX_ITERS = 25
+GAMMA = 0.05
+REGULATOR = 1

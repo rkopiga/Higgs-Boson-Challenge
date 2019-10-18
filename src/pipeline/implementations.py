@@ -155,13 +155,13 @@ def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
     
     Recommended values: gamma = 0.05, max_iters = 20-25, regulator = 1 with standardized data
     """
-    w_temp = initial_w
+    y = (y+1)/2
+    w = initial_w
     for i in range(max_iters):
-        loss_gradient = 1/len(y)*tx.T @ (logistic_function(tx@w_temp) - y) + 2*regulator*w_temp
-        w_temp -= gamma * loss_gradient 
-    w = w_temp
-    loss = logistic_loss(y, tx, w_temp, regulator)
-    return (w,loss)
+        loss_gradient = 1/len(y) * tx.T @ (logistic_function(tx@w) - y) + 2*regulator*w
+        w = w - gamma * loss_gradient
+    loss = logistic_loss(y, tx, w, regulator)
+    return w, loss
 
 
 def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):

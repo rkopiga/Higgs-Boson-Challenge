@@ -7,7 +7,15 @@ import matplotlib.pyplot as plt
 def local_prediction(tX, y, group=GROUP, ratio=RATIO):
     if group:
         tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
-        optimal_ws = find_optimal_ws_LS_grouped(tX_train_grouped, y_train_grouped)
+        len_tX = len(tX)
+        initial_ws = []
+        for i in range(len_tX):
+            initial_ws.append(np.repeat(0, tX[i].shape[1]))
+        max_iters_grouped = np.repeat(MAX_ITERS, len_tX)
+        gamma_grouped = np.repeat(GAMMA, len_tX)
+        regulator_grouped = np.repeat(REGULATOR, len_tX)
+        optimal_ws = find_optimal_ws_Log_Reg_grouped(tX_train_grouped, y_train_grouped, initial_ws, max_iters_grouped,
+                                                     gamma_grouped, regulator_grouped)
         y_pred_grouped = []
         y_pred_clipped_grouped = []
         for i in range(len(optimal_ws)):
@@ -17,7 +25,8 @@ def local_prediction(tX, y, group=GROUP, ratio=RATIO):
         compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped)
     else:
         tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
-        optimal_w, _ = least_squares(tX_train, y_train)
+        optimal_w, _ = logistic_regression_GD(y_train, tX_train, np.repeat(0, tX_train.shape[1]), MAX_ITERS, GAMMA, REGULATOR)
+        #optimal_w, _ = least_squares(y_train, tX_train)
         y_pred, y_pred_clipped = predict_labels(optimal_w, tX_sub_test)
         compare_labels(y_pred, y_pred_clipped, y_sub_test)
 

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """some helper functions for project 1."""
+from src.params import *
+from src.pipeline.implementations import *
+
 import csv
 import numpy as np
 
@@ -24,10 +27,15 @@ def load_csv_data(data_path, sub_sample=False):
     return yb, input_data, ids
 
 
-def predict_labels(weights, data):
+def predict_labels(weights, data, logistic_model=LOGISTIC_MODEL):
     """Generates class predictions given weights, and a test data matrix
     Returns the actual computed values of y, and the classification version"""
-    y_pred = np.dot(data, weights)
+    if logistic_model:
+        temp = np.dot(data, weights)
+        y_pred = np.exp(temp) / (1 + np.exp(temp))
+        y_pred = y_pred * 2 - 1
+    else:
+        y_pred = np.dot(data, weights)
     y_pred_clipped = np.copy(y_pred)
     y_pred_clipped[np.where(y_pred_clipped <= 0)] = -1
     y_pred_clipped[np.where(y_pred_clipped > 0)] = 1
