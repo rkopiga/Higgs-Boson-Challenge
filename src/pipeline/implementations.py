@@ -150,6 +150,7 @@ def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
         the last weight vector of the method, 
         and the corresponding loss value (cost function)
     
+    Recommended values: gamma = 0.05, max_iters = 20-25, regulator = 1 with standardized data
     """
     w_temp = initial_w
     for i in range(max_iters):
@@ -162,18 +163,40 @@ def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
 
 def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
     """
-    TO BE MODIFIED
+    Logistic regression using stochastic gradient descent
+    
+    Parameters
+    ----------
+    y: vector
+        The outputs
+    tx: vector
+        The inputs
+    initial_w: vector
+        Initial value of weights
+    max_iters: scalar
+        maximum number of iteration
+    gamma: scalar
+        define step size of gradient descent
+    
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    
+    Recommended values: gamma = 0.5, max_iters = 40 with standardized data
     """
+    
     w_temp = initial_w
-    batch_size = 1
     for i in range(max_iters):
-        for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
-            gradient = tx
-            loss_gradient = tx_n * (logistic_function(np.dot(tx_n, y_n)) - y_n)
-        w_temp = w_temp - gamma * loss_gradient
-    w = w_temp
-    loss, _ = mean_square_error(y, tx, w)
-    return w, loss
+        random_data_row = np.random.randint(low=0, high= tx.shape[0], size = 1)
+        tx_n = tx[random_data_row]
+        y_n = y[random_data_row]
+        loss_gradient = tx_n * (logistic_function(np.dot(tx_n,w_temp.T)) - y_n)
+        w_temp -= gamma * loss_gradient
+    w = w_temp    
+    loss = logistic_loss(y_n, tx_n, w.T, regulator = 0)
+    return (w,loss)
 
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
