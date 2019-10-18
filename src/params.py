@@ -22,6 +22,7 @@ STD = False
 FEATURE_EXPANSION = True
 DEGREE = 2
 MULTIPLICATION_COMBINATIONS = 3
+ONE_COLUMN = False
 
 # Local prediction parameters
 LOCAL_PREDICTION = True
