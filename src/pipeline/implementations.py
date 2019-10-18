@@ -78,21 +78,74 @@ def ridge_regression(y, tx, lambda_):
     return w, loss
 
 
-def logistic_regression_GD(y, tx, initial_w, max_iters, gamma):
+def logistic_function(z):
+    """
+    Computes logistic function of scalar or array
+    """
+    return np.exp(z)/(1 + np.exp(z))
+
+def logistic_loss(y, tx, w, regulator):
+    """
+    Computes loss using logistic cost function with regularizer
+    
+    Parameters
+    ----------
+    y: vector
+        The outputs
+    tx: vector
+        The inputs
+    w: vector
+        Vector of weights
+    regulator:
+        define value of regularizer in cost function
+    
+    Returns
+    -------
+    value of cost function: scalar
+    """
+    return 1/len(y)*np.sum(np.log(1 + np.exp(tx @ w)) - y @ (tx @ w)) + regulator*np.linalg.norm(w)**2
+
+
+def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
+    """
+    Logistic regression using gradient descent
+    
+    Parameters
+    ----------
+    y: vector
+        The outputs
+    tx: vector
+        The inputs
+    initial_w: vector
+        Initial value of weights
+    max_iters: scalar
+        maximum number of iteration
+    gamma: scalar
+        define step size of gradient descent
+    regulator:
+        define value of regulator in cost function
+    
+    
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    
+    """
     w_temp = initial_w
-    for i in range(2):
-        x_w = tx @ w_temp
-        print("xw is ", x_w)
-        log_function = logistic_function(tx @ w_temp)
-        loss_gradient = tx.T @ (log_function - y)
-        w_temp = w_temp - gamma * loss_gradient
-        print("w_temp is now ", w_temp)
+    for i in range(max_iters):
+        loss_gradient = 1/len(y)*tx.T @ (logistic_function(tx@w_temp) - y) + 2*regulator*w_temp
+        w_temp -= gamma * loss_gradient 
     w = w_temp
-    loss, _ = mean_square_error(y, tx, w_temp)
-    return w, loss
+    loss = logistic_loss(y, tx, w_temp, regulator)
+    return (w,loss)
 
 
 def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
+    """
+    TO BE MODIFIED
+    """
     w_temp = initial_w
     batch_size = 1
     for i in range(max_iters):
@@ -103,22 +156,6 @@ def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
     w = w_temp
     loss, _ = mean_square_error(y, tx, w)
     return w, loss
-
-
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    w_temp = initial_w
-    for i in range(max_iters):
-        e = y - tx @ w_temp
-        N = tx.shape[0]
-        loss_gradient = -(tx.T @ e) / N + lambda_ * w_temp
-        w_temp = w_temp - gamma * loss_gradient
-    w = w_temp
-    loss, _ = mean_square_error(y, tx, w)
-    return w, loss
-
-
-def logistic_function(z):
-    return np.exp(z) / (1 + np.exp(z))
 
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
