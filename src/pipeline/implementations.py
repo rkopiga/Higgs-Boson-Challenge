@@ -70,12 +70,30 @@ def least_squares(y, tx):
 
 
 def ridge_regression(y, tx, lambda_):
+    """
+    Ridge regression using normal equations.
+    
+    Parameters
+    ----------
+    y: vector
+        The outputs
+    tx: vector
+        The inputs
+    lambda_: scalar
+        The regularizer
+
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    """
     gamma_prime = 2 * tx.shape[0] * lambda_
-    additional_matrix = np.ones(tx.shape[1])
+    additional_matrix = np.identity(tx.shape[1]) * gamma_prime
     tx_T = tx.T
-    w = np.linalg.inv((tx_T @ tx) + additional_matrix) @ tx_T @ y
-    loss, _ = mean_square_error(y, tx, w)
-    return w, loss
+    w = np.linalg.inv(tx_T @ tx + additional_matrix) @ tx_T @ y
+    loss, loss_gradient = mean_square_error(y, tx, w)
+    return (w, loss)
 
 
 def logistic_function(z):
