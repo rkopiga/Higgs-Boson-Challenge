@@ -1,7 +1,7 @@
-from src.pipeline.preprocessing import *
-from src.pipeline.feature_engineering import *
-from src.pipeline.local_prediction import *
-from src.pipeline.helpers import *
+from preprocessing import *
+from feature_engineering import *
+from local_prediction import *
+from helpers import *
 
 # Training set preprocessing and feature engineering
 y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
@@ -19,7 +19,7 @@ else:
     optimal_ws = find_optimal_ws_LS_grouped(tX_improved, y_preprocessed)
     y_preds = []
     for i in range(len(optimal_ws)):
-        y_preds.append(predict_labels(optimal_ws[i], tX_test_improved[i])[1])
+        y_preds.append(predict_labels(optimal_ws[i], tX_test_improved[i], IMPLEMENTATION)[1])
     flat_y_preds = flatten_list(y_preds)
     flat_ids = flatten_list(ids_test_preprocessed)
     ids_indices = np.argsort(flat_ids)

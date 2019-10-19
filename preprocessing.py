@@ -1,5 +1,5 @@
 import numpy as np
-import src.params as params
+import params
 
 """
 Preprocessing pipeline
@@ -66,16 +66,7 @@ def preprocess(
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
             y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
-            if params.DEBUG:
-                masks_check = []
-                counts_check = []
-                for i in range(len(tX)):
-                    unwanted_value_check = 1 * (tX[i] == unwanted_value)
-                    masks_and_counts = np.unique(unwanted_value_check, return_counts=True, axis=0)
-                    masks_check.append(masks_and_counts[0])
-                    counts_check.append(masks_and_counts[1])
-                print(masks_check)
-                print(counts_check)
+            # check_uniqueness_in_group(tX, unwanted_value)
             if params.ADDITIONAL_SPLITTING:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
         if replace_unwanted_value:
@@ -93,6 +84,18 @@ def preprocess(
             tX = standardize(tX)
 
     return y, tX, ids, masks, counts
+
+
+def check_uniqueness_in_group(tX_grouped, unwanted_value):
+    masks_check = []
+    counts_check = []
+    for i in range(len(tX_grouped)):
+        unwanted_value_check = 1 * (tX_grouped[i] == unwanted_value)
+        masks_and_counts = np.unique(unwanted_value_check, return_counts=True, axis=0)
+        masks_check.append(masks_and_counts[0])
+        counts_check.append(masks_and_counts[1])
+    print(masks_check)
+    print(counts_check)
 
 
 def shuffle_data(y, tX, ids):
