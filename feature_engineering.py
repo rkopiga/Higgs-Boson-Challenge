@@ -22,6 +22,7 @@ def feature_engineering(tX,
             tX = feature_multiplication(tX)
         if one_column:
             tX = add_ones_column(tX)
+    print('\tFeature engineering ok.')
     return tX
 
 

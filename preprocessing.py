@@ -83,6 +83,7 @@ def preprocess(
         if std:
             tX = standardize(tX)
 
+    print('\tData preprocessed.')
     return y, tX, ids, masks, counts
 
 

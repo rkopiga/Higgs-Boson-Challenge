@@ -27,7 +27,7 @@ FEATURE_MULTIPLICATION = False
 ONE_COLUMN = False
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
-LOCAL_PREDICTION = True
+LOCAL_PREDICTION = False
 RATIO = 8/10
 
 # Implementations parameters -------------------------------------------------------------------------------------------

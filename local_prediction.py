@@ -1,22 +1,23 @@
 import matplotlib.pyplot as plt
+import params
 from proj1_helpers import *
 from implementations import *
 
 
-def local_prediction(tX, y, implementation=IMPLEMENTATION, group=GROUP, ratio=RATIO):
+def local_prediction(tX, y, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO):
     if group:
         tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
         log_initial_ws = []
         for i in range(len(tX)):
             log_initial_ws.append(np.repeat(0, tX_train_grouped[i].shape[1]))
         optimal_ws = find_optimal_ws_grouped(tX_train_grouped, y_train_grouped, implementation, log_initial_ws,
-                                             MAX_ITERS, GAMMA, REGULATOR, RIDGE_LAMBDA)
+                                             params.MAX_ITERS, params.GAMMA, params.REGULATOR, params.RIDGE_LAMBDA)
         y_pred_grouped, y_pred_clipped_grouped = predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation)
         return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation)
     else:
         tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
-        optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), MAX_ITERS, GAMMA, REGULATOR,
-                                   RIDGE_LAMBDA)
+        optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), params.MAX_ITERS, params.GAMMA, params.REGULATOR,
+                                   params.RIDGE_LAMBDA)
         y_pred, y_pred_clipped = predict_labels(optimal_w, tX_sub_test, implementation)
         return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation)
 
@@ -61,6 +62,7 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
     for i in range(len(tX_grouped)):
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w, log_max_iters,
                                          log_gamma, log_regulator, ridge_lambda))
+    print('\tOptimal ws found.')
     return optimal_ws
 
 
@@ -68,7 +70,7 @@ def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation):
     comparison = np.abs(y_pred_clipped + y_sub_test)
     unique, counts = np.unique(comparison, return_counts=True)
     accuracy = counts[1] / len(comparison)
-    if DEBUG:
+    if params.DEBUG:
         print('Implementation = {}'.format(implementation))
         print('Accuracy = {}'.format(accuracy))
         plt.figure()
