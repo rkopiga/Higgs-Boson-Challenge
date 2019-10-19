@@ -11,7 +11,7 @@ tX_improved = feature_engineering(tX_preprocessed)
 
 # In case we want to test our model locally by splitting our data
 if LOCAL_PREDICTION:
-    local_prediction(tX_improved, y_preprocessed)
+    local_prediction(tX_improved, y_preprocessed, counts)
 else:
     print('Test set:')
     y_test, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)

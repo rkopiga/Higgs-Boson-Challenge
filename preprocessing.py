@@ -67,7 +67,7 @@ def preprocess(
         elif group_2:
             y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
             # check_uniqueness_in_group(tX, unwanted_value)
-            if params.ADDITIONAL_SPLITTING:
+            if params.GROUP_2_ADDITIONAL_SPLITTING:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
         if replace_unwanted_value:
             tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
