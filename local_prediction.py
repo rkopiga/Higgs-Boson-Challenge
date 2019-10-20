@@ -60,9 +60,9 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
                             log_regulator, ridge_lambda):
     optimal_ws = []
     for i in range(len(tX_grouped)):
-        print('\t\tFinding optimal w for group {}'.format(i))
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w[i], log_max_iters,
                                          log_gamma, log_regulator, ridge_lambda))
+        print('\t\Found optimal w for group {}'.format(i))
     print('\tOptimal ws found.')
     return optimal_ws
 

@@ -12,8 +12,8 @@ PRI_jet_num_index = 22
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
 SHUFFLE_DATA = False
-GROUP_1 = True
-GROUP_2 = False
+GROUP_1 = False
+GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
 REPLACE_UNWANTED_VALUE = True
@@ -23,8 +23,8 @@ STD = True
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = True
 DEGREE = 2
-FEATURE_MULTIPLICATION = False
-ONE_COLUMN = False
+FEATURE_MULTIPLICATION = True
+ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
 LOCAL_PREDICTION = True

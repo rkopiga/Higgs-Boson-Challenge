@@ -5,3 +5,4 @@ __pycache__/
 *.ipynb
 .vscode/
 notebooks/
+.ipynb_checkpoints/
