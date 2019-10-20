@@ -5,6 +5,14 @@ import csv
 import numpy as np
 
 
+def flatten_list(list_to_flatten):
+    flat_list = []
+    for sublist in list_to_flatten:
+        for item in sublist:
+            flat_list.append(item)
+    return flat_list
+
+
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)

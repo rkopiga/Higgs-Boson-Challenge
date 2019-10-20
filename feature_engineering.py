@@ -1,13 +1,13 @@
-from proj1_helpers import *
-from params import *
+import numpy as np
+import params
 
 
-def feature_engineering(tX,
-                        group=GROUP,
-                        polynomial_expansion=FEATURE_EXPANSION,
-                        degree=DEGREE,
-                        polynomial_multiplication=FEATURE_MULTIPLICATION,
-                        one_column=ONE_COLUMN):
+def feature_engineer(tX,
+                     group=params.GROUP,
+                     polynomial_expansion=params.FEATURE_EXPANSION,
+                     degree=params.DEGREE,
+                     polynomial_multiplication=params.FEATURE_MULTIPLICATION,
+                     one_column=params.ONE_COLUMN):
     if group:
         if polynomial_expansion:
             tX = feature_expansion_grouped(tX, degree)

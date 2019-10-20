@@ -1,10 +1,12 @@
+import numpy as np
 import matplotlib.pyplot as plt
+
 import params
-from proj1_helpers import *
-from implementations import *
+import proj1_helpers as helpers
+import implementations as impl
 
 
-def local_prediction(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO):
+def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO):
     if group:
         tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
         log_initial_ws = []
@@ -12,13 +14,13 @@ def local_prediction(tX, y, counts, implementation=params.IMPLEMENTATION, group=
             log_initial_ws.append(np.repeat(0, tX_train_grouped[i].shape[1]))
         optimal_ws = find_optimal_ws_grouped(tX_train_grouped, y_train_grouped, implementation, log_initial_ws,
                                              params.MAX_ITERS, params.GAMMA, params.REGULATOR, params.RIDGE_LAMBDA)
-        y_pred_grouped, y_pred_clipped_grouped = predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation)
+        y_pred_grouped, y_pred_clipped_grouped = helpers.predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation)
         return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
         tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
         optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), params.MAX_ITERS, params.GAMMA, params.REGULATOR,
                                    params.RIDGE_LAMBDA)
-        y_pred, y_pred_clipped = predict_labels(optimal_w, tX_sub_test, implementation)
+        y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
         return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation)
 
 
@@ -48,11 +50,11 @@ def separate_data_grouped(tX_grouped, y_grouped, ratio):
 def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamma, log_regulator, ridge_lambda):
     optimal_w = None
     if implementation == 0:
-        optimal_w, _ = least_squares(y, tX)
+        optimal_w, _ = impl.least_squares(y, tX)
     if implementation == 1:
-        optimal_w, _ = ridge_regression(y, tX, ridge_lambda)
+        optimal_w, _ = impl.ridge_regression(y, tX, ridge_lambda)
     if implementation == 2:
-        optimal_w, _ = logistic_regression_GD(y, tX, log_initial_w, log_max_iters, log_gamma, log_regulator)
+        optimal_w, _ = impl.logistic_regression_GD(y, tX, log_initial_w, log_max_iters, log_gamma, log_regulator)
     return optimal_w
 
 
@@ -62,7 +64,7 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
     for i in range(len(tX_grouped)):
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w[i], log_max_iters,
                                          log_gamma, log_regulator, ridge_lambda))
-        print('\t\Found optimal w for group {}'.format(i))
+        print('\tFound optimal w for group {}.'.format(i))
     print('\tOptimal ws found.')
     return optimal_ws
 

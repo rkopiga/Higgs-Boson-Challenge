@@ -23,7 +23,7 @@ STD = True
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = True
 DEGREE = 2
-FEATURE_MULTIPLICATION = True
+FEATURE_MULTIPLICATION = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
@@ -42,4 +42,4 @@ GAMMA = 0.05
 REGULATOR = 1
 
 # Ridge-regression parameters
-RIDGE_LAMBDA = 0.00001
+RIDGE_LAMBDA = 0.0000001
