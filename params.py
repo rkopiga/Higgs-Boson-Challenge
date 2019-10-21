@@ -16,14 +16,14 @@ GROUP_1 = False
 GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
-REPLACE_UNWANTED_VALUE = True
 REMOVE_INV_FEATURES = True
+REPLACE_UNWANTED_VALUE = True
 STD = True
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
-FEATURE_EXPANSION = True
+FEATURE_EXPANSION = False
 DEGREE = 2
-FEATURE_MULTIPLICATION = False
+FEATURE_MULTIPLICATION = True
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
@@ -42,4 +42,4 @@ GAMMA = 0.05
 REGULATOR = 1
 
 # Ridge-regression parameters
-RIDGE_LAMBDA = 0.0000001
+RIDGE_LAMBDA = 0.000001

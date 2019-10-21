@@ -21,7 +21,7 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
         optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), params.MAX_ITERS, params.GAMMA, params.REGULATOR,
                                    params.RIDGE_LAMBDA)
         y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
-        return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation)
+        return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, counts)
 
 
 def separate_data(tX, y, ratio):
@@ -64,24 +64,24 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
     for i in range(len(tX_grouped)):
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w[i], log_max_iters,
                                          log_gamma, log_regulator, ridge_lambda))
-        print('\tFound optimal w for group {}.'.format(i))
+        print('\t\tFound optimal w for group {}.'.format(i))
     print('\tOptimal ws found.')
     return optimal_ws
 
 
-def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, group_number=0):
+def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, group_number=0):
     comparison = np.abs(y_pred_clipped + y_sub_test)
     unique, counts = np.unique(comparison, return_counts=True)
     accuracy = counts[1] / len(comparison)
     if params.DEBUG:
-        print('\t\tGroup {}'.format(group_number))
-        print('\t\tImplementation = {}'.format(implementation))
-        print('\t\tAccuracy = {}'.format(accuracy))
-        plt.figure()
-        plt.hist(y_pred, bins='auto')
-        plt.title('Group {}'.format(group_number))
-        plt.xlabel('y prediction')
-        plt.ylabel('Number of data points with this prediction')
+        print('\t\tGroup {} ({} data points)'.format(group_number, count))
+        print('\t\t\tImplementation = {}'.format(implementation))
+        print('\t\t\tAccuracy = {}'.format(accuracy))
+        # plt.figure()
+        # plt.hist(y_pred, bins='auto')
+        # plt.title('Group {}'.format(group_number))
+        # plt.xlabel('y prediction')
+        # plt.ylabel('Number of data points with this prediction')
     return accuracy
 
 
@@ -89,6 +89,6 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
     accuracies = []
     for i in range(len(y_pred_clipped_grouped)):
         accuracies.append(compare_labels(y_pred_grouped[i], y_pred_clipped_grouped[i], y_sub_test_grouped[i],
-                                         implementation, i))
+                                         implementation, counts[i], i))
     print('\nOverall accuracy = {}'.format(np.average(accuracies, weights=counts)))
     return accuracies

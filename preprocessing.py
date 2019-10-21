@@ -69,17 +69,17 @@ def preprocess(
             # check_uniqueness_in_group(tX, unwanted_value)
             if params.GROUP_2_ADDITIONAL_SPLITTING:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
-        if replace_unwanted_value:
-            tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
         if remove_inv_features:
             tX = remove_invariable_features_grouped(tX)
+        if replace_unwanted_value:
+            tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
         if std:
             tX = standardize_grouped(tX)
     else:
-        if replace_unwanted_value:
-            tX = replace_unwanted_value_by_mean(tX, unwanted_value)
         if remove_inv_features:
             tX = remove_invariable_features(tX)
+        if replace_unwanted_value:
+            tX = replace_unwanted_value_by_mean(tX, unwanted_value)
         if std:
             tX = standardize(tX)
 
@@ -178,23 +178,14 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
     """
 
     unwanted_value_check = 1 * (tX == unwanted_value)
-    masks, indices, counts = np.unique(
-        unwanted_value_check, return_inverse=True, return_counts=True, axis=0
-    )
+    masks, indices, counts = np.unique(unwanted_value_check, return_inverse=True, return_counts=True, axis=0)
 
     y_grouped, tX_grouped, ids_grouped = [], [], []
     for i in range(max(indices) + 1):
         condition = indices == i
-        y_grouped, tX_grouped, ids_grouped = extract_from_dataset(
-            y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped
-        )
-    return (
-        np.asarray(y_grouped),
-        np.array(tX_grouped, dtype=object),
-        np.asarray(ids_grouped),
-        masks,
-        counts,
-    )
+        y_grouped, tX_grouped, ids_grouped = extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped,
+                                                                  ids_grouped)
+    return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
 def split_in_groups_2(y, tX, ids):
