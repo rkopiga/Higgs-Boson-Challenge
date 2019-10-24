@@ -6,20 +6,23 @@ import proj1_helpers as helpers
 import implementations as impl
 
 
-def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO):
+def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
+                    max_iter=params.MAX_ITERS, gamma=params.GAMMA, log_lambda=params.LOG_LAMBDA,
+                    ridge_lambda=params.RIDGE_LAMBDA):
     if group:
         tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
         log_initial_ws = []
         for i in range(len(tX)):
             log_initial_ws.append(np.repeat(0, tX_train_grouped[i].shape[1]))
         optimal_ws = find_optimal_ws_grouped(tX_train_grouped, y_train_grouped, implementation, log_initial_ws,
-                                             params.MAX_ITERS, params.GAMMA, params.REGULATOR, params.RIDGE_LAMBDA)
-        y_pred_grouped, y_pred_clipped_grouped = helpers.predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation)
+                                             max_iter, gamma, log_lambda, ridge_lambda)
+        y_pred_grouped, y_pred_clipped_grouped = helpers.predict_labels_grouped(optimal_ws, tX_sub_test_grouped,
+                                                                                implementation)
         return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
         tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
-        optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), params.MAX_ITERS, params.GAMMA, params.REGULATOR,
-                                   params.RIDGE_LAMBDA)
+        optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), max_iter, gamma, log_lambda,
+                                   ridge_lambda)
         y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
         return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, counts)
 
@@ -54,7 +57,7 @@ def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamm
     if implementation == 1:
         optimal_w, _ = impl.ridge_regression(y, tX, ridge_lambda)
     if implementation == 2:
-        optimal_w, _ = impl.logistic_regression_GD(y, tX, log_initial_w, log_max_iters, log_gamma, log_regulator)
+        optimal_w, _ = impl.reg_logistic_regression(y, tX, log_regulator, log_initial_w, log_max_iters, log_gamma)
     return optimal_w
 
 

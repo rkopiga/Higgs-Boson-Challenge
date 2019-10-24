@@ -2,7 +2,7 @@
 DATA_TRAIN_PATH = 'data/train.csv'
 DATA_TEST_PATH = 'data/test.csv'
 OUTPUT_PATH = 'data/output.csv'
-DEBUG = True
+DEBUG = False
 
 # /!\ DO NOT CHANGE VALUES BELOW /!\
 UNWANTED_VALUE = -999
@@ -22,12 +22,15 @@ STD = True
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
-DEGREE = 2
+DEGREE = 3
 FEATURE_MULTIPLICATION = True
+ADD_COS = True
+ADD_SIN = True
+ADD_TAN = False  # Not good
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
-LOCAL_PREDICTION = True
+LOCAL_PREDICTION = False
 RATIO = 8/10
 
 # Implementations parameters -------------------------------------------------------------------------------------------
@@ -39,7 +42,7 @@ IMPLEMENTATION = 1
 # Logistic-regression parameters
 MAX_ITERS = 25
 GAMMA = 0.05
-REGULATOR = 1
+LOG_LAMBDA = 1
 
 # Ridge-regression parameters
 RIDGE_LAMBDA = 0.000001

@@ -12,6 +12,7 @@ def preprocess(
     ids,
     shuffle = params.SHUFFLE_DATA,
     unwanted_value=params.UNWANTED_VALUE,
+    group=params.GROUP,
     group_1=params.GROUP_1,
     group_2=params.GROUP_2,
     replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
@@ -55,13 +56,15 @@ def preprocess(
         The number of data points belonging to each group or None depending on the chosen split function
     """
 
+    print('\tPreprocessing...')
+
     masks = None
     counts = None
 
     if shuffle:
         y, tX, ids = shuffle_data(y, tX, ids)
     
-    if group_1 or group_2:
+    if group:
         if group_1:
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
@@ -83,7 +86,7 @@ def preprocess(
         if std:
             tX = standardize(tX)
 
-    print('\tData preprocessed.')
+    print('\tPreprocessing ok.')
     return y, tX, ids, masks, counts
 
 

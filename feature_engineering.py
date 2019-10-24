@@ -7,12 +7,22 @@ def feature_engineer(tX,
                      polynomial_expansion=params.FEATURE_EXPANSION,
                      degree=params.DEGREE,
                      polynomial_multiplication=params.FEATURE_MULTIPLICATION,
+                     add_cos=params.ADD_COS,
+                     add_sin=params.ADD_SIN,
+                     add_tan=params.ADD_TAN,
                      one_column=params.ONE_COLUMN):
+    print('\tFeature engineering...')
     if group:
         if polynomial_expansion:
             tX = feature_expansion_grouped(tX, degree)
         if polynomial_multiplication:
             tX = feature_multiplication_grouped(tX)
+        if add_cos:
+            tX = add_cosinus_grouped(tX)
+        if add_sin:
+            tX = add_sinus_grouped(tX)
+        if add_tan:
+            tX = add_tangent_grouped(tX)
         if one_column:
             tX = add_ones_column_grouped(tX)
     else:
@@ -20,6 +30,10 @@ def feature_engineer(tX,
             tX = feature_expansion(tX, degree)
         if polynomial_multiplication:
             tX = feature_multiplication(tX)
+        if add_cos:
+            tX = add_cosinus(tX)
+        if add_sin:
+            tX = add_sinus(tX)
         if one_column:
             tX = add_ones_column(tX)
     print('\tFeature engineering ok.')
@@ -62,6 +76,42 @@ def feature_multiplication_grouped(tX_grouped):
     for i in range(len(tX_grouped)):
         new_tX_grouped.append(feature_multiplication(tX_grouped[i]))
     return new_tX_grouped
+
+
+def add_cosinus(tX):
+    new_tX = tX
+    return np.hstack((tX, np.cos(new_tX)))
+
+
+def add_cosinus_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_cosinus(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_sinus(tX):
+    new_tX = tX
+    return np.hstack((tX, np.sin(new_tX)))
+
+
+def add_sinus_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_sinus(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_tangent(tX):
+    new_tX = tX
+    return np.hstack((tX, np.tan(new_tX)))
+
+
+def add_tangent_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_tangent(tX_grouped[i]))
+    return tX_grouped_new
 
 
 def add_ones_column(tX):

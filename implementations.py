@@ -95,17 +95,19 @@ def ridge_regression(y, tx, lambda_):
     tx_T = tx.T
     w = np.linalg.inv(tx_T @ tx + additional_matrix) @ tx_T @ y
     loss, loss_gradient = mean_square_error(y, tx, w)
-    return (w, loss)
+    return w, loss
 
 
 def logistic_function(z):
     """
     Computes logistic function of scalar or array
     """
-    return np.exp(z)/(1 + np.exp(z))
+    logistic_value = np.exp(z)/(1 + np.exp(z))
+    print(logistic_value)
+    return logistic_value
 
 
-def logistic_loss(y, tx, w, regulator):
+def logistic_loss(y, tx, w, lambda_):
     """
     Computes loss using logistic cost function with regularizer
     
@@ -117,17 +119,17 @@ def logistic_loss(y, tx, w, regulator):
         The inputs
     w: vector
         Vector of weights
-    regulator:
+    lambda_:
         define value of regularizer in cost function
     
     Returns
     -------
     value of cost function: scalar
     """
-    return 1/len(y)*np.sum(np.log(1 + np.exp(tx @ w)) - y @ (tx @ w)) + regulator*np.linalg.norm(w)**2
+    return 1 / len(y) * np.sum(np.log(1 + np.exp(tx @ w)) - y @ (tx @ w)) + lambda_ * np.linalg.norm(w) ** 2
 
 
-def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
     Logistic regression using gradient descent
     
@@ -137,14 +139,14 @@ def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
         The outputs
     tx: vector
         The inputs
+    lambda_:
+        define value of regulator in cost function
     initial_w: vector
         Initial value of weights
     max_iters: scalar
         maximum number of iteration
     gamma: scalar
         define step size of gradient descent
-    regulator:
-        define value of regulator in cost function
     
     
     Returns
@@ -158,13 +160,13 @@ def logistic_regression_GD(y, tx, initial_w, max_iters, gamma, regulator):
     y = (y+1)/2
     w = initial_w
     for i in range(max_iters):
-        loss_gradient = 1/len(y) * tx.T @ (logistic_function(tx@w) - y) + 2*regulator*w
+        loss_gradient = 1 / len(y) * tx.T @ (logistic_function(tx@w) - y) + 2 * lambda_ * w
         w = w - gamma * loss_gradient
-    loss = logistic_loss(y, tx, w, regulator)
+    loss = logistic_loss(y, tx, w, lambda_)
     return w, loss
 
 
-def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
     Logistic regression using stochastic gradient descent
     
@@ -198,7 +200,7 @@ def logistic_regression_SGD(y, tx, initial_w, max_iters, gamma):
         loss_gradient = tx_n * (logistic_function(np.dot(tx_n, w_temp.T)) - y_n)
         w_temp -= gamma * loss_gradient
     w = w_temp
-    loss = logistic_loss(y_n, tx_n, w.T, regulator=0)
+    loss = logistic_loss(y_n, tx_n, w.T, lambda_=0)
     return w, loss
 
 
