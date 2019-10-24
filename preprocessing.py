@@ -16,7 +16,9 @@ def preprocess(
     group_2=params.GROUP_2,
     replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
     remove_inv_features=params.REMOVE_INV_FEATURES,
-    std=params.STD
+    std=params.STD,
+    replace_outliers = params.REPLACE_OUTLIERS,
+    threshold = params.THRESHOLD
 ):
     """
     Preprocess the dataset
@@ -39,6 +41,10 @@ def preprocess(
         Rather we remove all the invariable features or not
     std: boolean
         Rather we standardize each feature in each group or not
+    replace_outliers: boolean
+        Rather we replace the outliers in each group or not
+    threshold: integer
+        Parameter that defines an outlier
 
     Returns
     -------
@@ -75,6 +81,8 @@ def preprocess(
             tX = remove_invariable_features_grouped(tX)
         if std:
             tX = standardize_grouped(tX)
+        if replace_outliers: 
+            tX = replace_outliers_grouped(tX,threshold)
     else:
         if replace_unwanted_value:
             tX = replace_unwanted_value_by_mean(tX, unwanted_value)
@@ -82,8 +90,17 @@ def preprocess(
             tX = remove_invariable_features(tX)
         if std:
             tX = standardize(tX)
+        if replace_outliers:
+            tX = replace_outliers_grouped(tX,threshold)
 
     print('\tData preprocessed.')
+    print("Shuffle ", shuffle)
+    print("groupe 1 ",group_1)
+    print("groupe 2 ",group_2)
+    print("replace unwanted value ",replace_unwanted_value)
+    print("remove_inv_feature ",remove_inv_features)
+    print("STD ",std)
+    print("replace outliers ",replace_outliers)
     return y, tX, ids, masks, counts
 
 
@@ -383,3 +400,60 @@ def standardize_grouped(tX_grouped):
     for i in range(len(tX_grouped)):
         tX_clean_std.append(standardize(tX_grouped[i]))
     return tX_clean_std
+
+def replace_outliers_grouped(tX_grouped,outlier_parameter):
+    """
+    In each group of data points, replace the outliers by the appropriate value.
+    
+    Parameters
+    ----------
+    tX_grouped: array of arrays of data points 
+        The features matrix grouped
+    outlier_parameter: integer
+        The parameter that defines how the value should be close to the mean    
+        
+    Returns
+    -------
+    tX_grouped: array of arrays of data points
+        The features matrix grouped with less outliers
+    """
+    for i in range(len(tX_grouped)):
+        tX_i = tX_grouped[i]
+        tX_grouped[i] = replace_outliers(tX_i,outlier_parameter)
+    return tX_grouped
+
+
+
+def replace_outliers(tX,outlier_parameter):
+    """
+    In each feature, replace the outliers by the appropriate value.
+    
+    Parameters
+    ----------
+    tX: array of data points 
+        The features matrix 
+    outlier_parameter: integer
+        The parameter that defines how the value should be close to the mean
+    
+    Returns
+    -------
+    tX: array of data points
+        The features matrix with less outliers
+    """
+    
+    for j in range(tX.shape[1]):
+        col = tX[:,j]
+        values,indices = np.unique(col, return_index = True)
+        data = zip(values, indices)
+        values_mean = np.mean(values)
+        values_std = np.std(values)
+        cut_off = outlier_parameter * values_std
+        lower, upper = values_mean - cut_off, values_mean + cut_off
+        outliers = [(x,y) for (x,y) in data if x < lower or x > upper]
+        for v,index in outliers:
+            if v < values_mean:
+                tX[index,j] = lower
+            else:
+                tX[index,j] = upper
+          
+    return tX
