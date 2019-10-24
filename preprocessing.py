@@ -11,7 +11,9 @@ def preprocess(
     tX,
     ids,
     shuffle=params.SHUFFLE_DATA,
+    remove_phis=params.REMOVE_PHIS,
     unwanted_value=params.UNWANTED_VALUE,
+    pri_jet_num_index=params.PRI_jet_num_index,
     group=params.GROUP,
     group_1=params.GROUP_1,
     group_2=params.GROUP_2,
@@ -66,12 +68,16 @@ def preprocess(
 
     if shuffle:
         y, tX, ids = shuffle_data(y, tX, ids)
+
+    if remove_phis:
+        tX = remove_angle_phis(tX)
+        pri_jet_num_index = params.PRI_jet_num_new_index
     
     if group:
         if group_1:
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
-            y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids)
+            y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids, pri_jet_num_index)
             # check_uniqueness_in_group(tX, unwanted_value)
             if params.GROUP_2_ADDITIONAL_SPLITTING:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
@@ -117,6 +123,12 @@ def shuffle_data(y, tX, ids):
     y_shuffled = model_data[:, model_data.shape[1]-2]
     tX_shuffled = model_data[:, :model_data.shape[1]-2]
     return y_shuffled, tX_shuffled, ids_shuffled
+
+
+def remove_angle_phis(tX):
+    new_tX = tX.T
+    new_tX = np.delete(new_tX, params.PHIs_indices, axis=0).T
+    return new_tX
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):
@@ -197,7 +209,7 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
     return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
-def split_in_groups_2(y, tX, ids):
+def split_in_groups_2(y, tX, ids, pri_jet_num_index):
     """
         Split the dataset into groups according to the value of the feature PRI_jet_column (also called PRI_jet_num).
 
@@ -225,7 +237,7 @@ def split_in_groups_2(y, tX, ids):
         """
     y_grouped, tX_grouped, ids_grouped, masks, counts = [], [], [], [], []
     for i in range(params.PRI_jet_num_max_value + 1):
-        condition = tX.T[params.PRI_jet_num_index] == i
+        condition = tX.T[pri_jet_num_index] == i
         masks.append(condition)
         counts.append(np.sum(condition))
         y_grouped, tX_grouped, ids_grouped = extract_from_dataset(

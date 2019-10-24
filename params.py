@@ -8,10 +8,13 @@ DEBUG = False
 UNWANTED_VALUE = -999
 PRI_jet_num_max_value = 3
 PRI_jet_num_index = 22
+PHIs_indices = [15, 18, 20, 25, 28]
+PRI_jet_num_new_index = PRI_jet_num_index - 3
 # /!\ -------------------------- /!\
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
-SHUFFLE_DATA = True
+SHUFFLE_DATA = False
+REMOVE_PHIS = True
 GROUP_1 = False
 GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
@@ -20,19 +23,19 @@ REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
 STD = True
 REPLACE_OUTLIERS = True
-THRESHOLD = 1.3
+THRESHOLD = 1.5
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
 DEGREE = 3
 FEATURE_MULTIPLICATION = True
 ADD_COS = True
-ADD_SIN = True
+ADD_SIN = False
 ADD_TAN = False  # Not good
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
-LOCAL_PREDICTION = False
+LOCAL_PREDICTION = True
 RATIO = 8/10
 
 # Implementations parameters -------------------------------------------------------------------------------------------
