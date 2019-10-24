@@ -11,7 +11,7 @@ PRI_jet_num_index = 22
 # /!\ -------------------------- /!\
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
-SHUFFLE_DATA = False
+SHUFFLE_DATA = True
 GROUP_1 = False
 GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
@@ -20,7 +20,7 @@ REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
 STD = True
 REPLACE_OUTLIERS = True
-THRESHOLD = 1.5
+THRESHOLD = 1.3
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False

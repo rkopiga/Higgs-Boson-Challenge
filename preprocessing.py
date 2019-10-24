@@ -60,9 +60,7 @@ def preprocess(
     counts: array
         The number of data points belonging to each group or None depending on the chosen split function
     """
-
     print('\tPreprocessing...')
-
     masks = None
     counts = None
 
@@ -94,15 +92,7 @@ def preprocess(
             tX = standardize(tX)
         if replace_outliers:
             tX = replace_outliers_grouped(tX,threshold)
-
     print('\tPreprocessing ok.')
-    print("Shuffle ", shuffle)
-    print("groupe 1 ", group_1)
-    print("groupe 2 ", group_2)
-    print("replace unwanted value ", replace_unwanted_value)
-    print("remove_inv_feature ", remove_inv_features)
-    print("STD ", std)
-    print("replace outliers ", replace_outliers)
     return y, tX, ids, masks, counts
 
 
