@@ -2,7 +2,7 @@
 DATA_TRAIN_PATH = 'data/train.csv'
 DATA_TEST_PATH = 'data/test.csv'
 OUTPUT_PATH = 'data/output.csv'
-DEBUG = False
+DEBUG = True
 
 # /!\ DO NOT CHANGE VALUES BELOW /!\
 UNWANTED_VALUE = -999
@@ -13,7 +13,7 @@ PRI_jet_num_new_index = PRI_jet_num_index - 3
 # /!\ -------------------------- /!\
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
-SHUFFLE_DATA = False
+SHUFFLE_DATA = True
 REMOVE_PHIS = True
 GROUP_1 = False
 GROUP_2 = True
@@ -29,9 +29,10 @@ THRESHOLD = 1.5
 FEATURE_EXPANSION = False
 DEGREE = 3
 FEATURE_MULTIPLICATION = True
-ADD_COS = True
-ADD_SIN = False
+ADD_COS = False
+ADD_SIN = True
 ADD_TAN = False  # Not good
+ADD_EXP = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
@@ -45,9 +46,10 @@ RATIO = 8/10
 IMPLEMENTATION = 1
 
 # Logistic-regression parameters
-MAX_ITERS = 25
+MAX_ITERS = 50
 GAMMA = 0.05
-LOG_LAMBDA = 1
+r = 1  # Between 0.5 and 1
+LOG_LAMBDA = 0
 
 # Ridge-regression parameters
-RIDGE_LAMBDA = 0.000001
+RIDGE_LAMBDA = 0.000000001

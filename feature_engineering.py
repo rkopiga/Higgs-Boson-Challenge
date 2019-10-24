@@ -10,6 +10,7 @@ def feature_engineer(tX,
                      add_cos=params.ADD_COS,
                      add_sin=params.ADD_SIN,
                      add_tan=params.ADD_TAN,
+                     add_exp=params.ADD_EXP,
                      one_column=params.ONE_COLUMN):
     print('\tFeature engineering...')
     if group:
@@ -23,6 +24,8 @@ def feature_engineer(tX,
             tX = add_sinus_grouped(tX)
         if add_tan:
             tX = add_tangent_grouped(tX)
+        if add_exp:
+            tX = add_exponential_grouped(tX)
         if one_column:
             tX = add_ones_column_grouped(tX)
     else:
@@ -34,6 +37,8 @@ def feature_engineer(tX,
             tX = add_cosinus(tX)
         if add_sin:
             tX = add_sinus(tX)
+        if add_exp:
+            tX = add_exponential(tX)
         if one_column:
             tX = add_ones_column(tX)
     print('\tFeature engineering ok.')
@@ -111,6 +116,18 @@ def add_tangent_grouped(tX_grouped):
     tX_grouped_new = []
     for i in range(len(tX_grouped)):
         tX_grouped_new.append(add_tangent(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_exponential(tX):
+    new_tX = tX
+    return np.hstack((tX, np.exp(new_tX)))
+
+
+def add_exponential_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_exponential(tX_grouped[i]))
     return tX_grouped_new
 
 

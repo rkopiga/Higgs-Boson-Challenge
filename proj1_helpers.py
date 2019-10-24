@@ -3,6 +3,7 @@
 
 import csv
 import numpy as np
+import params
 
 
 def flatten_list(list_to_flatten):
@@ -11,6 +12,10 @@ def flatten_list(list_to_flatten):
         for item in sublist:
             flat_list.append(item)
     return flat_list
+
+
+def gamma(step, r=params.r):
+    return 1/(step+1)**r
 
 
 def load_csv_data(data_path, sub_sample=False):

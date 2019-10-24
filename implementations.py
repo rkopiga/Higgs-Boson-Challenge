@@ -1,5 +1,7 @@
 import numpy as np
 
+import proj1_helpers as helper
+
 
 def mean_square_error(y, tx, w):
     e = y - tx @ w
@@ -103,7 +105,6 @@ def logistic_function(z):
     Computes logistic function of scalar or array
     """
     logistic_value = np.exp(z)/(1 + np.exp(z))
-    print(logistic_value)
     return logistic_value
 
 
@@ -161,7 +162,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
     for i in range(max_iters):
         loss_gradient = 1 / len(y) * tx.T @ (logistic_function(tx@w) - y) + 2 * lambda_ * w
-        w = w - gamma * loss_gradient
+        w = w - helper.gamma(i) * loss_gradient
     loss = logistic_loss(y, tx, w, lambda_)
     return w, loss
 
