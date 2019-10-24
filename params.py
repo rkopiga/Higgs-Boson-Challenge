@@ -19,6 +19,8 @@ GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
 STD = True
+REPLACE_OUTLIERS = True
+THRESHOLD = 1.5
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
