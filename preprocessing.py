@@ -97,7 +97,7 @@ def preprocess(
         if std:
             tX = standardize(tX)
         if replace_outliers:
-            tX = replace_outliers_grouped(tX,threshold)
+            tX = replace_outliers_by_threshold(tX, threshold)
     print('\tPreprocessing ok.')
     return y, tX, ids, masks, counts
 
@@ -397,7 +397,7 @@ def standardize_grouped(tX_grouped):
     return tX_clean_std
 
 
-def replace_outliers(tX, outlier_parameter):
+def replace_outliers_by_threshold(tX, threshold):
     """
     In each feature, replace the outliers by the appropriate value.
     
@@ -405,7 +405,7 @@ def replace_outliers(tX, outlier_parameter):
     ----------
     tX: array of data points 
         The features matrix 
-    outlier_parameter: integer
+    threshold: integer
         The parameter that defines how the value should be close to the mean
     
     Returns
@@ -420,10 +420,10 @@ def replace_outliers(tX, outlier_parameter):
         data = zip(values, indices)
         values_mean = np.mean(values)
         values_std = np.std(values)
-        cut_off = outlier_parameter * values_std
+        cut_off = threshold * values_std
         lower, upper = values_mean - cut_off, values_mean + cut_off
         outliers = [(x, y) for (x, y) in data if x < lower or x > upper]
-        for v,index in outliers:
+        for v, index in outliers:
             if v < values_mean:
                 tX[index, j] = lower
             else:
@@ -432,7 +432,7 @@ def replace_outliers(tX, outlier_parameter):
     return tX
 
 
-def replace_outliers_grouped(tX_grouped, outlier_parameter):
+def replace_outliers_grouped(tX_grouped, threshold):
     """
     In each group of data points, replace the outliers by the appropriate value.
 
@@ -440,7 +440,7 @@ def replace_outliers_grouped(tX_grouped, outlier_parameter):
     ----------
     tX_grouped: array of arrays of data points
         The features matrix grouped
-    outlier_parameter: integer
+    threshold: integer
         The parameter that defines how the value should be close to the mean
 
     Returns
@@ -450,5 +450,5 @@ def replace_outliers_grouped(tX_grouped, outlier_parameter):
     """
     for i in range(len(tX_grouped)):
         tX_i = tX_grouped[i]
-        tX_grouped[i] = replace_outliers(tX_i, outlier_parameter)
+        tX_grouped[i] = replace_outliers_by_threshold(tX_i, threshold)
     return tX_grouped

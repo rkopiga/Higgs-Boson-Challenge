@@ -7,8 +7,8 @@ import implementations as impl
 
 
 def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
-                    max_iter=params.MAX_ITERS, gamma=params.GAMMA, log_lambda=params.LOG_LAMBDA,
-                    ridge_lambda=params.RIDGE_LAMBDA):
+                    cross_validation=params.CROSS_VALIDATION, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
+                    log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
     if group:
         tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
         log_initial_ws = []
@@ -20,11 +20,14 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
                                                                                 implementation)
         return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
-        tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
-        optimal_w = find_optimal_w(tX, y, implementation, np.repeat(0, tX_train.shape[1]), max_iter, gamma, log_lambda,
-                                   ridge_lambda)
-        y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
-        return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, counts)
+        if cross_validation:
+            return cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda)
+        else:
+            tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
+            optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
+                                       gamma, log_lambda, ridge_lambda)
+            y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
+            return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, counts)
 
 
 def separate_data(tX, y, ratio):
@@ -95,3 +98,41 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
                                          implementation, counts[i], i))
     print('\nOverall accuracy = {}'.format(np.average(accuracies, weights=counts)))
     return accuracies
+
+
+def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda):
+    n_parts = int(1/(1-ratio))
+    tX_split = np.array_split(tX, n_parts, axis=0)
+    y_split = np.array_split(y, n_parts, axis=0)
+    indices_to_choose = np.arange(n_parts)
+    accuracies = []
+
+    for i in range(3):
+        print('Cross validation {}'.format(i))
+        chosen_index = np.random.choice(indices_to_choose)
+        condition = np.full(n_parts, True)
+        condition[chosen_index] = False
+        indices_to_choose = indices_to_choose[indices_to_choose != chosen_index]
+
+        tX_train = np.extract(condition, tX_split)
+        tX_train = np.reshape(tX_train, [len(tX_train), 1])
+        tX_train = np.stack(tX_train, axis=0)
+        print(tX_train.shape)
+
+        y_train = np.asarray(np.extract(condition, y_split))
+        y_train = np.reshape(y_train, [len(y_train), 1])
+
+        tX_sub_test = np.asarray(np.extract(~condition, tX_split))
+        tX_sub_test = np.reshape(tX_sub_test, [len(tX_sub_test), 1])
+
+        y_sub_test = np.asarray(np.extract(~condition, y_split))
+        y_sub_test = np.reshape(y_sub_test, [len(y_sub_test), 1])
+
+        optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
+                                   gamma, log_lambda, ridge_lambda)
+        y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
+        accuracies.append(compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, len(y_train)+len(y_sub_test)))
+
+    mean_accuracy = np.mean(accuracies)
+    print('\nOverall accuracy = {}'.format(mean_accuracy))
+    return mean_accuracy
