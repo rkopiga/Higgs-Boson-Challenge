@@ -24,13 +24,9 @@ if __name__ == '__main__':
         log_initial_ws = []
         for i in range(len(tX_test_improved)):
             log_initial_ws.append(np.repeat(0, tX_test_improved[i].shape[1]))
-        optimal_ws = pred.find_optimal_ws_grouped(tX_test_improved, y_test_preprocessed,
-                                                  implementation=params.IMPLEMENTATION,
-                                                  log_initial_w=log_initial_ws,
-                                                  log_max_iters=params.MAX_ITERS,
-                                                  log_gamma=params.GAMMA,
-                                                  log_regulator=params.LOG_LAMBDA,
-                                                  ridge_lambda=params.RIDGE_LAMBDA)
+        optimal_ws = pred.find_optimal_ws_grouped(tX_improved, y_preprocessed, params.IMPLEMENTATION, log_initial_ws,
+                                                  params.MAX_ITERS, params.GAMMA, params.LOG_LAMBDA,
+                                                  params.RIDGE_LAMBDA)
         y_preds = []
         for i in range(len(optimal_ws)):
             y_preds.append(helpers.predict_labels(optimal_ws[i], tX_test_improved[i], params.IMPLEMENTATION)[1])
