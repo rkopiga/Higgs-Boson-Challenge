@@ -69,7 +69,7 @@ def compute_stoch_gradient(y, tx, w):
 def least_squares(y, tx):
     tx_T = tx.T
     w = np.linalg.inv(tx_T @ tx) @ tx_T @ y
-    loss, loss_gradient = mean_square_error(y, tx, w)
+    loss, _ = mean_square_error(y, tx, w)
     return w, loss
 
 
@@ -96,7 +96,7 @@ def ridge_regression(y, tx, lambda_):
     additional_matrix = np.identity(tx.shape[1]) * gamma_prime
     tx_T = tx.T
     w = np.linalg.inv(tx_T @ tx + additional_matrix) @ tx_T @ y
-    loss, loss_gradient = mean_square_error(y, tx, w)
+    loss, _ = mean_square_error(y, tx, w)
     return w, loss
 
 
@@ -199,7 +199,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         tx_n = tx[random_data_row]
         y_n = y[random_data_row]
         loss_gradient = tx_n * (logistic_function(np.dot(tx_n, w_temp.T)) - y_n)
-        w_temp -= gamma * loss_gradient
+        w_temp -= helper.gamma(i) * loss_gradient
     w = w_temp
     loss = logistic_loss(y_n, tx_n, w.T, lambda_=0)
     return w, loss
