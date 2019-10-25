@@ -33,6 +33,8 @@ ADD_COS = False
 ADD_SIN = True
 ADD_TAN = False  # Not good
 ADD_EXP = False
+ADD_LOG = True
+ADD_SQRT = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------

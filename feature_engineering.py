@@ -11,6 +11,8 @@ def feature_engineer(tX,
                      add_sin=params.ADD_SIN,
                      add_tan=params.ADD_TAN,
                      add_exp=params.ADD_EXP,
+                     add_log=params.ADD_LOG,
+                     add_sqrt=params.ADD_SQRT,
                      one_column=params.ONE_COLUMN):
     print('\tFeature engineering...')
     if group:
@@ -26,6 +28,10 @@ def feature_engineer(tX,
             tX = add_tangent_grouped(tX)
         if add_exp:
             tX = add_exponential_grouped(tX)
+        if add_log:
+            tX = add_logarithm_grouped(tX)
+        if add_sqrt:
+            tX = add_square_root_grouped(tX)
         if one_column:
             tX = add_ones_column_grouped(tX)
     else:
@@ -39,6 +45,10 @@ def feature_engineer(tX,
             tX = add_sinus(tX)
         if add_exp:
             tX = add_exponential(tX)
+        if add_log:
+            tX = add_logarithm(tX)
+        if add_sqrt:
+            tX = add_square_root(tX)
         if one_column:
             tX = add_ones_column(tX)
     print('\tFeature engineering ok.')
@@ -128,6 +138,36 @@ def add_exponential_grouped(tX_grouped):
     tX_grouped_new = []
     for i in range(len(tX_grouped)):
         tX_grouped_new.append(add_exponential(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_logarithm(tX):
+    new_tX = tX.T
+    minimum_by_feature = np.reshape(np.abs(np.min(new_tX, axis=1))+1, [new_tX.shape[0], 1])
+    new_tX += minimum_by_feature
+    logarithms = np.log(new_tX.T)
+    return np.hstack((tX, logarithms))
+
+
+def add_logarithm_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_logarithm(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_square_root(tX):
+    new_tX = tX.T
+    minimum_by_feature = np.reshape(np.abs(np.min(new_tX, axis=1)), [new_tX.shape[0], 1])
+    new_tX += minimum_by_feature
+    square_roots = np.sqrt(new_tX.T)
+    return np.hstack((tX, square_roots))
+
+
+def add_square_root_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_square_root(tX_grouped[i]))
     return tX_grouped_new
 
 
