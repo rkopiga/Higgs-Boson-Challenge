@@ -14,7 +14,7 @@ PRI_jet_num_new_index = PRI_jet_num_index - 3
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
 SHUFFLE_DATA = False
-REMOVE_PHIS = False
+REMOVE_PHIS = True
 GROUP_1 = False
 GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
@@ -30,7 +30,7 @@ FEATURE_EXPANSION = False
 DEGREE = 3
 FEATURE_MULTIPLICATION = True
 ADD_COS = False
-ADD_SIN = False
+ADD_SIN = True
 ADD_TAN = False  # Not good
 ADD_EXP = False
 ADD_LOG = False
@@ -40,7 +40,7 @@ ONE_COLUMN = True
 # Local prediction parameters ------------------------------------------------------------------------------------------
 LOCAL_PREDICTION = True
 RATIO = 8/10
-CROSS_VALIDATION = False
+CROSS_VALIDATION = True
 
 # Implementations parameters -------------------------------------------------------------------------------------------
 # 0 = Least-squares
