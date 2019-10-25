@@ -102,7 +102,7 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
 
 def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda):
     n_parts = int(1/(1-ratio))
-    tX_split = np.array_split(tX, n_parts, axis=0)
+    tX_split = np.asarray(np.array_split(tX, n_parts, axis=0))
     y_split = np.array_split(y, n_parts, axis=0)
     indices_to_choose = np.arange(n_parts)
     accuracies = []
@@ -114,19 +114,15 @@ def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ri
         condition[chosen_index] = False
         indices_to_choose = indices_to_choose[indices_to_choose != chosen_index]
 
-        tX_train = np.extract(condition, tX_split)
-        tX_train = np.reshape(tX_train, [len(tX_train), 1])
-        tX_train = np.stack(tX_train, axis=0)
-        print(tX_train.shape)
+        tX_train = np.compress(condition, tX_split,axis= 0) 
+        tX_train = np.vstack(tX_train)
 
-        y_train = np.asarray(np.extract(condition, y_split))
-        y_train = np.reshape(y_train, [len(y_train), 1])
+        y_train = np.compress(condition, y_split,axis=0)
+        y_train = np.hstack(y_train)
 
-        tX_sub_test = np.asarray(np.extract(~condition, tX_split))
-        tX_sub_test = np.reshape(tX_sub_test, [len(tX_sub_test), 1])
+        tX_sub_test = np.compress(~condition, tX_split,axis = 0)[0]
 
-        y_sub_test = np.asarray(np.extract(~condition, y_split))
-        y_sub_test = np.reshape(y_sub_test, [len(y_sub_test), 1])
+        y_sub_test = np.compress(~condition, y_split,axis = 0)[0]
 
         optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
                                    gamma, log_lambda, ridge_lambda)
