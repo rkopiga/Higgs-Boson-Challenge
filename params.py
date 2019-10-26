@@ -69,6 +69,7 @@ IMPLEMENTATION = 1
 # Logistic-regression parameters
 MAX_ITERS = 50
 GAMMA = 0.05
+DECREASING_GAMMA = True
 r = 1  # Between 0.5 and 1
 LOG_LAMBDA = 0
 

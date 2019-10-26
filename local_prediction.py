@@ -8,10 +8,10 @@ import implementations as impl
 
 def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
                     cross_validation=params.CROSS_VALIDATION, k=params.K, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
-                    log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
+                    decreasing_gamma=params.DECREASING_GAMMA, log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
     if group:
         if cross_validation:
-            return cross_validate_grouped(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda,
+            return cross_validate_grouped(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda,
                                    ridge_lambda, counts)
         else:
             tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
@@ -19,17 +19,17 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
             for i in range(len(tX)):
                 log_initial_ws.append(np.repeat(0, tX_train_grouped[i].shape[1]))
             optimal_ws = find_optimal_ws_grouped(tX_train_grouped, y_train_grouped, implementation, log_initial_ws,
-                                                 max_iter, gamma, log_lambda, ridge_lambda)
+                                                 max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda)
             y_pred_grouped, y_pred_clipped_grouped = helpers.predict_labels_grouped(optimal_ws, tX_sub_test_grouped,
                                                                                     implementation)
             return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
         if cross_validation:
-            return cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts)
+            return cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, counts)
         else:
             tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
             optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
-                                       gamma, log_lambda, ridge_lambda)
+                                       gamma, decreasing_gamma, log_lambda, ridge_lambda)
             y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
             return compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, counts)
 
@@ -57,23 +57,23 @@ def separate_data_grouped(tX_grouped, y_grouped, ratio):
     return tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped
 
 
-def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamma, log_regulator, ridge_lambda):
+def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamma, decreasing_gamma, log_regulator, ridge_lambda):
     optimal_w = None
     if implementation == 0:
         optimal_w, _ = impl.least_squares(y, tX)
     if implementation == 1:
         optimal_w, _ = impl.ridge_regression(y, tX, ridge_lambda)
     if implementation == 2:
-        optimal_w, _ = impl.reg_logistic_regression(y, tX, log_regulator, log_initial_w, log_max_iters, log_gamma)
+        optimal_w, _ = impl.reg_logistic_regression(y, tX, log_regulator, log_initial_w, log_max_iters, log_gamma, decreasing_gamma)
     return optimal_w
 
 
-def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w, log_max_iters, log_gamma,
+def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w, log_max_iters, log_gamma, decreasing_gamma,
                             log_regulator, ridge_lambda):
     optimal_ws = []
     for i in range(len(tX_grouped)):
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w[i], log_max_iters,
-                                         log_gamma, log_regulator, ridge_lambda))
+                                         log_gamma, decreasing_gamma, log_regulator, ridge_lambda))
         print('\t\tFound optimal w for group {}.'.format(i))
     print('\tOptimal ws found.')
     return optimal_ws
@@ -104,7 +104,7 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
     return accuracies
 
 
-def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, count, group_number=0):
+def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, count, group_number=0):
     n_parts = int(1/(1-ratio))
     tX_split = np.asarray(np.array_split(tX, n_parts, axis=0))
     y_split = np.array_split(y, n_parts, axis=0)
@@ -129,7 +129,7 @@ def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda,
         y_sub_test = np.compress(~condition, y_split, axis=0)[0]
 
         optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
-                                   gamma, log_lambda, ridge_lambda)
+                                   gamma, decreasing_gamma, log_lambda, ridge_lambda)
         y_pred, y_pred_clipped = helpers.predict_labels(optimal_w, tX_sub_test, implementation)
         accuracies.append(compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, group_number=group_number))
 
@@ -140,8 +140,8 @@ def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda,
     return mean_accuracy
 
 
-def cross_validate_grouped(tX_grouped, y_grouped, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts):
+def cross_validate_grouped(tX_grouped, y_grouped, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, counts):
     accuracies = []
     for i in range(len(tX_grouped)):
-        accuracies.append(cross_validate(tX_grouped[i], y_grouped[i], ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts[i], i))
+        accuracies.append(cross_validate(tX_grouped[i], y_grouped[i], ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, counts[i], i))
     print('\nOverall accuracy = {}'.format(np.average(accuracies, weights=counts)))

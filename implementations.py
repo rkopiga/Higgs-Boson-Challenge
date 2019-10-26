@@ -130,7 +130,7 @@ def logistic_loss(y, tx, w, lambda_):
     return 1 / len(y) * np.sum(np.log(1 + np.exp(tx @ w)) - y @ (tx @ w)) + lambda_ * np.linalg.norm(w) ** 2
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreasing_gamma=False):
     """
     Logistic regression using gradient descent
     
@@ -162,12 +162,15 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
     for i in range(max_iters):
         loss_gradient = 1 / len(y) * tx.T @ (logistic_function(tx@w) - y) + 2 * lambda_ * w
-        w = w - helper.gamma(i) * loss_gradient
+        if decreasing_gamma:
+            w = w - helper.gamma(i) * loss_gradient
+        else:
+            w = w - gamma * loss_gradient
     loss = logistic_loss(y, tx, w, lambda_)
     return w, loss
 
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=False):
     """
     Logistic regression using stochastic gradient descent
     
@@ -199,7 +202,10 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         tx_n = tx[random_data_row]
         y_n = y[random_data_row]
         loss_gradient = tx_n * (logistic_function(np.dot(tx_n, w_temp.T)) - y_n)
-        w_temp -= helper.gamma(i) * loss_gradient
+        if decreasing_gamma:
+            w_temp -= helper.gamma(i) * loss_gradient
+        else:
+            w_temp -= gamma * loss_gradient
     w = w_temp
     loss = logistic_loss(y_n, tx_n, w.T, lambda_=0)
     return w, loss
