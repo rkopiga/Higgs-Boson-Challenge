@@ -320,7 +320,7 @@ def replace_unwanted_value_by_value(tX, unwanted_value, value):
             features[i][features[i] == unwanted_value] = np.mean(features[i][features[i] != unwanted_value])
         elif value == 'median':
             features[i][features[i] == unwanted_value] = np.median(features[i][features[i] != unwanted_value])
-    print(features)
+    return features.T
 
 
 def replace_unwanted_value_by_value_grouped(tX_grouped, unwanted_value, value):
