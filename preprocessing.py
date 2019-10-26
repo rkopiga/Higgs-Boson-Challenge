@@ -24,6 +24,7 @@ def preprocess(
     remove_inv_features=params.REMOVE_INV_FEATURES,
     std=params.STD,
     replace_outliers=params.REPLACE_OUTLIERS,
+    outlier_value=params.OUTLIER_VALUE,
     threshold=params.THRESHOLD):
     """
     Preprocess the dataset
@@ -91,7 +92,7 @@ def preprocess(
         if std:
             tX = standardize_grouped(tX)
         if replace_outliers: 
-            tX = replace_outliers_grouped(tX, threshold)
+            tX = replace_outliers_grouped(tX, threshold, outlier_value)
     else:
         if remove_inv_features:
             tX = remove_invariable_features(tX)
@@ -100,7 +101,7 @@ def preprocess(
         if std:
             tX = standardize(tX)
         if replace_outliers:
-            tX = replace_outliers_by_threshold(tX, threshold)
+            tX = replace_outliers_by_threshold(tX, threshold, outlier_value)
     print('\tPreprocessing ok.')
     return y, tX, ids, masks, counts
 
@@ -429,7 +430,7 @@ def standardize_grouped(tX_grouped):
     return tX_clean_std
 
 
-def replace_outliers_by_threshold(tX, threshold):
+def replace_outliers_by_threshold(tX, threshold, outlier_value):
     """
     In each feature, replace the outliers by the appropriate value.
     
@@ -454,17 +455,32 @@ def replace_outliers_by_threshold(tX, threshold):
         values_std = np.std(values)
         cut_off = threshold * values_std
         lower, upper = values_mean - cut_off, values_mean + cut_off
-        outliers = [(x, y) for (x, y) in data if x < lower or x > upper]
-        for v, index in outliers:
-            if v < values_mean:
-                tX[index, j] = lower
+        outliers = []
+        other_values = []
+        for (x, y) in data:
+            if x < lower or x > upper:
+                outliers.append((x, y))
             else:
-                tX[index, j] = upper
-          
+                other_values.append((x, y))
+        lower_mean = np.mean(np.asarray(other_values)[other_values <= values_mean])
+        upper_mean = np.mean(np.asarray(other_values)[other_values >= values_mean])
+        for v, index in outliers:
+            if outlier_value == 'clip':
+                if v < values_mean:
+                    tX[index, j] = lower
+                else:
+                    tX[index, j] = upper
+            elif outlier_value == 'mean':
+                tX[index, j] = values_mean
+            elif outlier_value == 'upper_lower_mean':
+                if v < values_mean:
+                    tX[index, j] = lower_mean
+                else:
+                    tX[index, j] = upper_mean
     return tX
 
 
-def replace_outliers_grouped(tX_grouped, threshold):
+def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
     """
     In each group of data points, replace the outliers by the appropriate value.
 
@@ -482,5 +498,5 @@ def replace_outliers_grouped(tX_grouped, threshold):
     """
     for i in range(len(tX_grouped)):
         tX_i = tX_grouped[i]
-        tX_grouped[i] = replace_outliers_by_threshold(tX_i, threshold)
+        tX_grouped[i] = replace_outliers_by_threshold(tX_i, threshold, outlier_value)
     return tX_grouped

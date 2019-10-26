@@ -28,15 +28,16 @@ REMOVE_PHIS = True
 ADD_DIFF_PHIS = False  # TODO
 GROUP_1 = False
 GROUP_2 = True
-LESS_GROUPS = False
+LESS_GROUPS = True
 GROUPS_TO_MERGE = [2, 3]
 GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
-VALUE = 'median'
+VALUE = 'median'  # possible values: median, mean
 STD = True
 REPLACE_OUTLIERS = True
+OUTLIER_VALUE = 'clip'  # possible values: clip, mean, upper_lower_mean
 THRESHOLD = 1.5
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
