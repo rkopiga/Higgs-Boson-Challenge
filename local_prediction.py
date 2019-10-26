@@ -7,11 +7,11 @@ import implementations as impl
 
 
 def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
-                    cross_validation=params.CROSS_VALIDATION, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
+                    cross_validation=params.CROSS_VALIDATION, k=params.K, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
                     log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
     if group:
         if cross_validation:
-            return cross_validate_grouped(tX, y, ratio, implementation, max_iter, gamma, log_lambda,
+            return cross_validate_grouped(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda,
                                    ridge_lambda, counts)
         else:
             tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped = separate_data_grouped(tX, y, ratio)
@@ -25,7 +25,7 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
             return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
         if cross_validation:
-            return cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts)
+            return cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts)
         else:
             tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
             optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
@@ -104,14 +104,14 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
     return accuracies
 
 
-def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, count, group_number=0):
+def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, count, group_number=0):
     n_parts = int(1/(1-ratio))
     tX_split = np.asarray(np.array_split(tX, n_parts, axis=0))
     y_split = np.array_split(y, n_parts, axis=0)
     indices_to_choose = np.arange(n_parts)
     accuracies = []
 
-    for i in range(3):
+    for i in range(k):
         # print('Cross validation {}'.format(i))
         chosen_index = np.random.choice(indices_to_choose)
         condition = np.full(n_parts, True)
@@ -140,8 +140,8 @@ def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ri
     return mean_accuracy
 
 
-def cross_validate_grouped(tX_grouped, y_grouped, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts):
+def cross_validate_grouped(tX_grouped, y_grouped, ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts):
     accuracies = []
     for i in range(len(tX_grouped)):
-        accuracies.append(cross_validate(tX_grouped[i], y_grouped[i], ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts[i], i))
+        accuracies.append(cross_validate(tX_grouped[i], y_grouped[i], ratio, k, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts[i], i))
     print('\nOverall accuracy = {}'.format(np.average(accuracies, weights=counts)))

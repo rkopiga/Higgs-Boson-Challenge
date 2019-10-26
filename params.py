@@ -28,9 +28,9 @@ REMOVE_PHIS = True
 ADD_DIFF_PHIS = False  # TODO
 GROUP_1 = False
 GROUP_2 = True
-LESS_GROUPS = True
+LESS_GROUPS = False
 GROUPS_TO_MERGE = [2, 3]
-GROUP_2_ADDITIONAL_SPLITTING = False
+GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
@@ -57,6 +57,7 @@ ONE_COLUMN = True
 LOCAL_PREDICTION = True
 RATIO = 8/10
 CROSS_VALIDATION = True
+K = 3
 
 # Implementations parameters -------------------------------------------------------------------------------------------
 # 0 = Least-squares
