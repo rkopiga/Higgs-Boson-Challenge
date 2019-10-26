@@ -25,7 +25,7 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
             return compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts)
     else:
         if cross_validation:
-            return cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda)
+            return cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, counts)
         else:
             tX_train, y_train, tX_sub_test, y_sub_test = separate_data(tX, y, ratio)
             optimal_w = find_optimal_w(tX_train, y_train, implementation, np.repeat(0, tX_train.shape[1]), max_iter,
@@ -104,7 +104,7 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
     return accuracies
 
 
-def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, count, group_number):
+def cross_validate(tX, y, ratio, implementation, max_iter, gamma, log_lambda, ridge_lambda, count, group_number=0):
     n_parts = int(1/(1-ratio))
     tX_split = np.asarray(np.array_split(tX, n_parts, axis=0))
     y_split = np.array_split(y, n_parts, axis=0)

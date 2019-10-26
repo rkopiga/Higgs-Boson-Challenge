@@ -20,6 +20,7 @@ def preprocess(
     group_2=params.GROUP_2,
     less_groups=params.LESS_GROUPS,
     replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
+    value=params.VALUE,
     remove_inv_features=params.REMOVE_INV_FEATURES,
     std=params.STD,
     replace_outliers=params.REPLACE_OUTLIERS,
@@ -86,7 +87,7 @@ def preprocess(
         if remove_inv_features:
             tX = remove_invariable_features_grouped(tX)
         if replace_unwanted_value:
-            tX = replace_unwanted_value_by_mean_grouped(tX, unwanted_value)
+            tX = replace_unwanted_value_by_value_grouped(tX, unwanted_value, value)
         if std:
             tX = standardize_grouped(tX)
         if replace_outliers: 
@@ -95,7 +96,7 @@ def preprocess(
         if remove_inv_features:
             tX = remove_invariable_features(tX)
         if replace_unwanted_value:
-            tX = replace_unwanted_value_by_mean(tX, unwanted_value)
+            tX = replace_unwanted_value_by_value(tX, unwanted_value, value)
         if std:
             tX = standardize(tX)
         if replace_outliers:
@@ -298,7 +299,7 @@ def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
     return y_grouped_new, tX_grouped_new, ids_grouped_new, masks_new, counts_new
 
 
-def replace_unwanted_value_by_mean(tX, unwanted_value):
+def replace_unwanted_value_by_value(tX, unwanted_value, value):
     """
     In each feature, replace the unwanted value by the mean of the remaining values.
 
@@ -314,17 +315,15 @@ def replace_unwanted_value_by_mean(tX, unwanted_value):
     The new matrix tX after replacing the unwanted value with the mean of the remaining features.
     """
     features = tX.T
-    mask = features == unwanted_value
-    features_new = np.ma.array(features, mask=mask)
-    means = np.mean(features_new, axis=1)
     for i in range(len(features)):
-        a = features_new[i]
-        a[a == unwanted_value] = means[i]
-        features[i] = a
-    return features.T
+        if value == 'mean':
+            features[i][features[i] == unwanted_value] = np.mean(features[i][features[i] != unwanted_value])
+        elif value == 'median':
+            features[i][features[i] == unwanted_value] = np.median(features[i][features[i] != unwanted_value])
+    print(features)
 
 
-def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
+def replace_unwanted_value_by_value_grouped(tX_grouped, unwanted_value, value):
     """
     For each group and in each feature, replace the unwanted value by the mean of the remaining values in that features.
 
@@ -342,7 +341,7 @@ def replace_unwanted_value_by_mean_grouped(tX_grouped, unwanted_value):
     tX_grouped_new = []
     for i in range(len(tX_grouped)):
         tX_grouped_new.append(
-            replace_unwanted_value_by_mean(tX_grouped[i], unwanted_value)
+            replace_unwanted_value_by_value(tX_grouped[i], unwanted_value, value)
         )
     return tX_grouped_new
 
