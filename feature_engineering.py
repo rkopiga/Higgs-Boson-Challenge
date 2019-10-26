@@ -13,6 +13,8 @@ def feature_engineer(tX,
                      add_exp=params.ADD_EXP,
                      add_log=params.ADD_LOG,
                      add_sqrt=params.ADD_SQRT,
+                     add_cos2=params.ADD_COS2,
+                     add_sin2=params.ADD_SIN2,
                      one_column=params.ONE_COLUMN):
     print('\tFeature engineering...')
     if group:
@@ -32,6 +34,10 @@ def feature_engineer(tX,
             tX = add_logarithm_grouped(tX)
         if add_sqrt:
             tX = add_square_root_grouped(tX)
+        if add_cos2:
+            tX = add_cosinus_2_grouped(tX)
+        if add_sin2:
+            tX = add_sinus_2_grouped(tX)
         if one_column:
             tX = add_ones_column_grouped(tX)
     else:
@@ -49,6 +55,10 @@ def feature_engineer(tX,
             tX = add_logarithm(tX)
         if add_sqrt:
             tX = add_square_root(tX)
+        if add_cos2:
+            tX = add_cosinus_2(tX)
+        if add_sin2:
+            tX = add_sinus_2(tX)
         if one_column:
             tX = add_ones_column(tX)
     print('\tFeature engineering ok.')
@@ -105,6 +115,18 @@ def add_cosinus_grouped(tX_grouped):
     return tX_grouped_new
 
 
+def add_cosinus_2(tX):
+    new_tX = tX
+    return np.hstack((tX, np.cos(new_tX)**2))
+
+
+def add_cosinus_2_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_cosinus_2(tX_grouped[i]))
+    return tX_grouped_new
+
+
 def add_sinus(tX):
     new_tX = tX
     return np.hstack((tX, np.sin(new_tX)))
@@ -114,6 +136,18 @@ def add_sinus_grouped(tX_grouped):
     tX_grouped_new = []
     for i in range(len(tX_grouped)):
         tX_grouped_new.append(add_sinus(tX_grouped[i]))
+    return tX_grouped_new
+
+
+def add_sinus_2(tX):
+    new_tX = tX
+    return np.hstack((tX, np.sin(new_tX)**2))
+
+
+def add_sinus_2_grouped(tX_grouped):
+    tX_grouped_new = []
+    for i in range(len(tX_grouped)):
+        tX_grouped_new.append(add_sinus_2(tX_grouped[i]))
     return tX_grouped_new
 
 

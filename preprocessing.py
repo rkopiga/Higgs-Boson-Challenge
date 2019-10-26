@@ -12,6 +12,7 @@ def preprocess(
     ids,
     shuffle=params.SHUFFLE_DATA,
     remove_phis=params.REMOVE_PHIS,
+    add_diff_phis=params.ADD_DIFF_PHIS,
     unwanted_value=params.UNWANTED_VALUE,
     pri_jet_num_index=params.PRI_jet_num_index,
     group=params.GROUP,
@@ -70,7 +71,7 @@ def preprocess(
         y, tX, ids = shuffle_data(y, tX, ids)
 
     if remove_phis:
-        tX = remove_angle_phis(tX)
+        tX = handle_angle_phis(tX, add_diff_phis)
         pri_jet_num_index = params.PRI_jet_num_new_index
     
     if group:
@@ -125,10 +126,16 @@ def shuffle_data(y, tX, ids):
     return y_shuffled, tX_shuffled, ids_shuffled
 
 
-def remove_angle_phis(tX):
-    new_tX = tX.T
-    new_tX = np.delete(new_tX, params.PHIs_indices, axis=0).T
-    return new_tX
+def handle_angle_phis(tX, add_diff_phis):
+    features = tX.T
+    if add_diff_phis:
+        combinations = params.diff_phis_indices
+        new_features = []
+        for i in range(len(combinations)):
+            new_features.append(features[combinations[i][0]] - features[combinations[i][1]])
+        features = np.hstack(features, new_features)
+    features = np.delete(features, params.PHIs_indices, axis=0).T
+    return features
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):

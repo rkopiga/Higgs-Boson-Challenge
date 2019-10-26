@@ -9,12 +9,23 @@ UNWANTED_VALUE = -999
 PRI_jet_num_max_value = 3
 PRI_jet_num_index = 22
 PHIs_indices = [15, 18, 20, 25, 28]
+diff_phis_indices = [[0, 1],
+                     [0, 2],
+                     [0, 3],
+                     [0, 4],
+                     [1, 2],
+                     [1, 3],
+                     [1, 4],
+                     [2, 3],
+                     [2, 4],
+                     [3, 4]]
 PRI_jet_num_new_index = PRI_jet_num_index - 3
 # /!\ -------------------------- /!\
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
-SHUFFLE_DATA = False
+SHUFFLE_DATA = True
 REMOVE_PHIS = True
+ADD_DIFF_PHIS = True  # TODO
 GROUP_1 = False
 GROUP_2 = True
 GROUP_2_ADDITIONAL_SPLITTING = True
@@ -35,6 +46,8 @@ ADD_TAN = False  # Not good
 ADD_EXP = False
 ADD_LOG = False
 ADD_SQRT = False
+ADD_COS2 = False
+ADD_SIN2 = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
@@ -56,3 +69,50 @@ LOG_LAMBDA = 0
 
 # Ridge-regression parameters
 RIDGE_LAMBDA = 0.000000001
+
+
+# TODO add arguments to the function to be able to put it at the beginning of locally_predict
+def print_parameters():
+    print('----- Preprocessing parameters -----\n')
+    print('REMOVE_PHIS = {}'.format(REMOVE_PHIS))
+    print('ADD_DIFF_PHIS = {}'.format(ADD_DIFF_PHIS))
+    print('GROUP_1 = {}'.format(GROUP_1))
+    print('GROUP_2 = {}'.format(GROUP_2))
+    if GROUP_2:
+        print('\tGROUP_2_ADDITIONAL_SPLITTING = {}'.format(GROUP_2_ADDITIONAL_SPLITTING))
+    print('REMOVE_INV_FEATURES = {}'.format(REMOVE_INV_FEATURES))
+    print('REPLACE_UNWANTED_VALUE = {}'.format(REPLACE_UNWANTED_VALUE))
+    print('STD = {}'.format(STD))
+    print('REPLACE_OUTLIERS = {}'.format(REPLACE_OUTLIERS))
+    if REPLACE_OUTLIERS:
+        print('\tTHRESHOLD = {}'.format(THRESHOLD))
+
+    print('----- Feature engineering parameters -----\n')
+    print('FEATURE_EXPANSION = {}'.format(FEATURE_EXPANSION))
+    if FEATURE_EXPANSION:
+        print('DEGREE = {}'.format(DEGREE))
+    print('FEATURE_MULTIPLICATION = {}'.format(FEATURE_MULTIPLICATION))
+    print('ADD_COS = {}'.format(ADD_COS))
+    print('ADD_SIN = {}'.format(ADD_SIN))
+    print('ADD_TAN = {}'.format(ADD_TAN))
+    print('ADD_EXP = {}'.format(ADD_EXP))
+    print('ADD_LOG = {}'.format(ADD_LOG))
+    print('ADD_SQRT = {}'.format(ADD_SQRT))
+    print('ADD_COS2 = {}'.format(ADD_COS2))
+    print('ADD_SIN2 = {}'.format(ADD_SIN2))
+    print('ONE_COLUMN = {}'.format(ONE_COLUMN))
+
+    if LOCAL_PREDICTION:
+        print('----- Local prediction parameters -----\n')
+        print('RATIO = {}'.format(RATIO))
+        print('CROSS_VALIDATION = {}'.format(CROSS_VALIDATION))
+
+    print('----- Implementation parameters -----\n')
+    print('IMPLEMENTATION = {}'.format(IMPLEMENTATION))
+    if IMPLEMENTATION == 2:
+        print('MAX_ITERS = {}'.format(MAX_ITERS))
+        print('GAMMA = {}'.format(GAMMA))
+        print('r = {}'.format(r))
+        print('LOG_LAMBDA = {}'.format(LOG_LAMBDA))
+    if IMPLEMENTATION == 1:
+        print('RIDGE_LAMBDA = {}'.format(RIDGE_LAMBDA))
