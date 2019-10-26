@@ -1,6 +1,9 @@
 import numpy as np
+import params
 
-import proj1_helpers as helper
+
+def gamma(step, r=params.r):
+    return 1/(step+1)**r
 
 
 def mean_square_error(y, tx, w):
@@ -163,7 +166,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreas
     for i in range(max_iters):
         loss_gradient = 1 / len(y) * tx.T @ (logistic_function(tx@w) - y) + 2 * lambda_ * w
         if decreasing_gamma:
-            w = w - helper.gamma(i) * loss_gradient
+            w = w - gamma(i) * loss_gradient
         else:
             w = w - gamma * loss_gradient
     loss = logistic_loss(y, tx, w, lambda_)
@@ -203,7 +206,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=Fal
         y_n = y[random_data_row]
         loss_gradient = tx_n * (logistic_function(np.dot(tx_n, w_temp.T)) - y_n)
         if decreasing_gamma:
-            w_temp -= helper.gamma(i) * loss_gradient
+            w_temp -= gamma(i) * loss_gradient
         else:
             w_temp -= gamma * loss_gradient
     w = w_temp

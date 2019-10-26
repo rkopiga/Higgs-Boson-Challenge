@@ -25,7 +25,8 @@ def preprocess(
     std=params.STD,
     replace_outliers=params.REPLACE_OUTLIERS,
     outlier_value=params.OUTLIER_VALUE,
-    threshold=params.THRESHOLD):
+    threshold=params.THRESHOLD,
+    remove_duplicate_features=params.REMOVE_DUPLICATE_FEATURES):
     """
     Preprocess the dataset
 
@@ -96,6 +97,8 @@ def preprocess(
             tX = standardize_grouped(tX)
         if replace_outliers: 
             tX = replace_outliers_grouped(tX, threshold, outlier_value)
+        if remove_duplicate_features:
+            tX = remove_duplicate_columns_grouped(tX)
     else:
         if remove_inv_features:
             tX = remove_invariable_features(tX)
@@ -105,6 +108,8 @@ def preprocess(
             tX = standardize(tX)
         if replace_outliers:
             tX = replace_outliers_by_threshold(tX, threshold, outlier_value)
+        if remove_duplicate_features:
+            tX = remove_duplicate_columns(tX)
     print('\tPreprocessing ok.')
     return y, tX, ids, masks, counts
 
@@ -503,3 +508,16 @@ def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
         tX_i = tX_grouped[i]
         tX_grouped[i] = replace_outliers_by_threshold(tX_i, threshold, outlier_value)
     return tX_grouped
+
+
+def remove_duplicate_columns(tX):
+    features = tX.T
+    new_features, indices = np.unique(features, return_inverse=True, axis=0)
+    return new_features.T
+
+
+def remove_duplicate_columns_grouped(tX_grouped):
+    new_tX = []
+    for i in range(len(tX_grouped)):
+        new_tX.append(remove_duplicate_columns(tX_grouped[i]))
+    return new_tX

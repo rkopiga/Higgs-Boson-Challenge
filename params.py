@@ -9,16 +9,6 @@ UNWANTED_VALUE = -999
 PRI_jet_num_max_value = 3
 PRI_jet_num_index = 22
 PHIs_indices = [15, 18, 20, 25, 28]
-diff_phis_indices = [[0, 1],
-                     [0, 2],
-                     [0, 3],
-                     [0, 4],
-                     [1, 2],
-                     [1, 3],
-                     [1, 4],
-                     [2, 3],
-                     [2, 4],
-                     [3, 4]]
 PRI_jet_num_new_index = PRI_jet_num_index - 3
 # /!\ -------------------------- /!\
 
@@ -39,6 +29,7 @@ STD = True
 REPLACE_OUTLIERS = True
 OUTLIER_VALUE = 'clip'  # possible values: clip, mean, upper_lower_mean
 THRESHOLD = 1.5
+REMOVE_DUPLICATE_FEATURES = True
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
