@@ -74,8 +74,11 @@ def preprocess(
         y, tX, ids = shuffle_data(y, tX, ids)
 
     if remove_phis:
+        initial_feature_number = 30
         tX = handle_angle_phis(tX, add_diff_phis)
         pri_jet_num_index = params.PRI_jet_num_new_index
+        phi_replace_unwanted_value = replace_unwanted_value_by_value(tX[:,initial_feature_number+1:],unwanted_value,'median')
+        tX[:,initial_feature_number+1:] = phi_replace_unwanted_value
     
     if group:
         if group_1:
