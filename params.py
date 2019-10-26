@@ -25,9 +25,11 @@ PRI_jet_num_new_index = PRI_jet_num_index - 3
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
 SHUFFLE_DATA = True
 REMOVE_PHIS = True
-ADD_DIFF_PHIS = True  # TODO
+ADD_DIFF_PHIS = False  # TODO
 GROUP_1 = False
 GROUP_2 = True
+LESS_GROUPS = False
+GROUPS_TO_MERGE = [2, 3]
 GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True

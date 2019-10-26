@@ -18,6 +18,7 @@ def preprocess(
     group=params.GROUP,
     group_1=params.GROUP_1,
     group_2=params.GROUP_2,
+    less_groups=params.LESS_GROUPS,
     replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
     remove_inv_features=params.REMOVE_INV_FEATURES,
     std=params.STD,
@@ -78,7 +79,7 @@ def preprocess(
         if group_1:
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
-            y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids, pri_jet_num_index)
+            y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups)
             # check_uniqueness_in_group(tX, unwanted_value)
             if params.GROUP_2_ADDITIONAL_SPLITTING:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
@@ -222,7 +223,7 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
     return np.asarray(y_grouped), np.array(tX_grouped, dtype=object), np.asarray(ids_grouped), masks, counts
 
 
-def split_in_groups_2(y, tX, ids, pri_jet_num_index):
+def split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups=False):
     """
         Split the dataset into groups according to the value of the feature PRI_jet_column (also called PRI_jet_num).
 
@@ -249,20 +250,39 @@ def split_in_groups_2(y, tX, ids, pri_jet_num_index):
             The number of data points belonging to each group
         """
     y_grouped, tX_grouped, ids_grouped, masks, counts = [], [], [], [], []
-    for i in range(params.PRI_jet_num_max_value + 1):
-        condition = tX.T[pri_jet_num_index] == i
-        masks.append(condition)
-        counts.append(np.sum(condition))
-        y_grouped, tX_grouped, ids_grouped = extract_from_dataset(
-            y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped
+    if less_groups:
+        for i in range(params.PRI_jet_num_max_value):
+            if i == params.PRI_jet_num_max_value - 1:
+                condition = np.isin(tX.T[pri_jet_num_index], params.GROUPS_TO_MERGE)
+            else:
+                condition = tX.T[pri_jet_num_index] == i
+            masks.append(condition)
+            counts.append(np.sum(condition))
+            y_grouped, tX_grouped, ids_grouped = extract_from_dataset(
+                y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped
+            )
+        return (
+            np.asarray(y_grouped),
+            np.array(tX_grouped, dtype=object),
+            np.asarray(ids_grouped),
+            masks,
+            counts,
         )
-    return (
-        np.asarray(y_grouped),
-        np.array(tX_grouped, dtype=object),
-        np.asarray(ids_grouped),
-        masks,
-        counts,
-    )
+    else:
+        for i in range(params.PRI_jet_num_max_value + 1):
+            condition = tX.T[pri_jet_num_index] == i
+            masks.append(condition)
+            counts.append(np.sum(condition))
+            y_grouped, tX_grouped, ids_grouped = extract_from_dataset(
+                y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped
+            )
+        return (
+            np.asarray(y_grouped),
+            np.array(tX_grouped, dtype=object),
+            np.asarray(ids_grouped),
+            masks,
+            counts,
+        )
 
 
 def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
