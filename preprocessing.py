@@ -134,18 +134,18 @@ def shuffle_data(y, tX, ids):
 
 def handle_angle_phis(tX, add_diff_phis):
     features = tX
-    PHIS_features = np.take(tX,params.PHIs_indices,axis=1)
-    diff_features = PHIS_features[:,0].reshape(PHIS_features.shape[0],1)
+    PHIS_features = np.take(tX, params.PHIs_indices, axis=1)
+    diff_features = PHIS_features[:, 0].reshape(PHIS_features.shape[0], 1)
     if add_diff_phis:
         column_phis = PHIS_features.shape[1]
         for i in range(column_phis):
             if i != column_phis-1:
-                phi_feature = PHIS_features[:,i].reshape(PHIS_features.shape[0],1)
-                subtracted_features = np.subtract(PHIS_features[:,i+1:], phi_feature)
-                diff_features = np.hstack((diff_features,subtracted_features))
+                phi_feature = PHIS_features[:, i].reshape(PHIS_features.shape[0], 1)
+                subtracted_features = np.subtract(PHIS_features[:, i+1:], phi_feature)
+                diff_features = np.hstack((diff_features, subtracted_features))
                 
-        diff_features = diff_features[:,1:]
-        features = np.hstack((features,diff_features))  
+        diff_features = diff_features[:, 1:]
+        features = np.hstack((features, diff_features))
     features = np.delete(features, params.PHIs_indices, axis=1)
     return features
 
