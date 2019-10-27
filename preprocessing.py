@@ -43,8 +43,6 @@ def preprocess(
         Rather we shuffle the data points or not
     remove_phis: boolean
         Rather we remove the phi-features or not
-    add_diff_phis: boolean
-        Rather we add the differences between phis before removing it
     unwanted_value: int
         The value indicating a missing/not-supposed-to-be-there measurement
     pri_jet_num_index: int
@@ -103,9 +101,9 @@ def preprocess(
         y, tX, ids = shuffle_data(y, tX, ids)
 
     if remove_phis:
-        initial_feature_number = params.INITIAL_FEATURE_COLUMN - len(params.PHIs_indices)
-        tX = handle_angle_phis(tX, add_diff_phis)
-
+        tX = handle_angle_phis(tX)
+        pri_jet_num_index = params.PRI_jet_num_new_index
+    
     if group:
         if group_1:
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
@@ -199,17 +197,14 @@ def shuffle_data(y, tX, ids):
     return y_shuffled, tX_shuffled, ids_shuffled
 
 
-def handle_angle_phis(tX, add_diff_phis):
+def handle_angle_phis(tX):
     """
-    Add some features corresponding to the difference of the phi-features if add_diff_phis is set to True,
-    then delete the phi-features from the features matrix.
+     Delete the phi-features from the features matrix.
 
     Parameters
     ----------
     tX: array
         The features matrix
-    add_diff_phis: boolean
-        Rather we add the features corresponding to the difference of the phi-features or not
 
     Returns
     -------
@@ -217,8 +212,6 @@ def handle_angle_phis(tX, add_diff_phis):
         The new features matrix
     """
     new_tX = tX
-    PHIS_features = np.take(tX, params.PHIs_indices, axis=1)
-    diff_features = PHIS_features[:, 0].reshape(PHIS_features.shape[0], 1)
     new_tX = np.delete(new_tX, params.PHIs_indices, axis=1)
     return new_tX
 

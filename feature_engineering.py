@@ -7,6 +7,7 @@ def feature_engineer(tX,
                      polynomial_expansion=params.FEATURE_EXPANSION,
                      degree=params.DEGREE,
                      polynomial_multiplication=params.FEATURE_MULTIPLICATION,
+                     triple_multiplication=params.TRIPLE_MULTIPLICATION,
                      add_cos=params.ADD_COS,
                      add_sin=params.ADD_SIN,
                      add_tan=params.ADD_TAN,
@@ -89,7 +90,7 @@ def feature_engineer(tX,
         if polynomial_expansion:
             tX = feature_expansion_grouped(tX, degree)
         if polynomial_multiplication:
-            tX = feature_multiplication_grouped(tX)
+            tX = feature_multiplication_grouped(tX,triple_multiplication)
         if add_cos:
             tX = add_cosinus_grouped(tX)
         if add_sin:
@@ -112,7 +113,7 @@ def feature_engineer(tX,
         if polynomial_expansion:
             tX = feature_expansion(tX, degree)
         if polynomial_multiplication:
-            tX = feature_multiplication(tX)
+            tX = feature_multiplication(tX,triple_multiplication)
         if add_cos:
             tX = add_cosinus(tX)
         if add_sin:
@@ -200,7 +201,7 @@ def feature_expansion_grouped(tX_grouped, degree):
     return tX_expanded
 
 
-def feature_multiplication(tX):
+def feature_multiplication(tX,triple_multiplication):
     """
     Feature multiplication on features. This function takes every features and multiply each other. 
         
@@ -214,11 +215,15 @@ def feature_multiplication(tX):
     new_tX: array   
         The data matrix to which the features multiplied to each other are appended.
     """
+    
     new_tX = tX
+    tX_column_size = tX.shape[1]
     for i in range(tX.shape[1]):
         col = tX[:, i].reshape(tX.shape[0], 1)
         tX_concat = np.multiply(tX[:, i:], col)
         new_tX = np.hstack((new_tX, tX_concat))
+    if triple_multiplication:
+        new_tX = feature_triple_multiplication(new_tX,tX_column_size)
     return new_tX
 
 
@@ -244,7 +249,7 @@ def feature_multiplication_grouped(tX_grouped, triple_multiplication):
     #First round
     new_tX_grouped = []
     for i in range(len(tX_grouped)):
-        new_tX_grouped.append(feature_multiplication(tX_grouped[i]))
+        new_tX_grouped.append(feature_multiplication(tX_grouped[i],False))
     #Second round
     if triple_multiplication:
         for i in range(len(new_tX_grouped)):

@@ -20,7 +20,7 @@ GROUP_1 = False
 GROUP_2 = True
 LESS_GROUPS = True
 GROUPS_TO_MERGE = [2, 3]
-GROUP_2_ADDITIONAL_SPLITTING = True
+GROUP_2_ADDITIONAL_SPLITTING = False
 GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
@@ -29,12 +29,13 @@ STD = True
 REPLACE_OUTLIERS = True
 OUTLIER_VALUE = 'clip'  # possible values: clip, mean, upper_lower_mean
 THRESHOLD = 1.5
-REMOVE_DUPLICATE_FEATURES = True
+REMOVE_DUPLICATE_FEATURES = False
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
 DEGREE = 3
 FEATURE_MULTIPLICATION = True
+TRIPLE_MULTIPLICATION = True
 ADD_COS = False
 ADD_SIN = True
 ADD_TAN = False  # Not good
@@ -55,7 +56,7 @@ K = 3
 # 0 = Least-squares
 # 1 = Ridge-regression
 # 2 = Logistic-regression
-IMPLEMENTATION = 2
+IMPLEMENTATION = 1
 
 # Logistic-regression parameters
 MAX_ITERS = 30
