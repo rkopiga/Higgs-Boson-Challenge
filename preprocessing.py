@@ -93,7 +93,6 @@ def preprocess(
     """
     print('\tPreprocessing...')
     print('REMOVE PHIS :',remove_phis)
-    print('ADD PHIS :',add_diff_phis)
     print('REMOVE INV FEATURES', remove_inv_features)
     print('STD', std)
     print('REPLACE OUTLIERS', replace_outliers)
