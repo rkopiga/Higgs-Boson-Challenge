@@ -18,9 +18,9 @@ SHUFFLE_DATA = True
 REMOVE_PHIS = True
 GROUP_1 = False
 GROUP_2 = True
-LESS_GROUPS = True
+LESS_GROUPS = False
 GROUPS_TO_MERGE = [2, 3]
-GROUP_2_ADDITIONAL_SPLITTING = False
+GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
 REMOVE_INV_FEATURES = True
 REPLACE_UNWANTED_VALUE = True
@@ -35,7 +35,7 @@ REMOVE_DUPLICATE_FEATURES = False
 FEATURE_EXPANSION = False
 DEGREE = 3
 FEATURE_MULTIPLICATION = True
-TRIPLE_MULTIPLICATION = True
+TRIPLE_MULTIPLICATION = False
 ADD_COS = False
 ADD_SIN = True
 ADD_TAN = False  # Not good
@@ -47,9 +47,9 @@ ADD_SIN2 = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
-LOCAL_PREDICTION = True
+LOCAL_PREDICTION = False
 RATIO = 8/10
-CROSS_VALIDATION = True
+CROSS_VALIDATION = False
 K = 3
 
 # Implementations parameters -------------------------------------------------------------------------------------------

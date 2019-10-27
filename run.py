@@ -25,7 +25,7 @@ if __name__ == '__main__':
         for i in range(len(tX_test_improved)):
             log_initial_ws.append(np.repeat(0, tX_test_improved[i].shape[1]))
         optimal_ws = pred.find_optimal_ws_grouped(tX_improved, y_preprocessed, params.IMPLEMENTATION, log_initial_ws,
-                                                  params.MAX_ITERS, params.GAMMA, params.LOG_LAMBDA,
+                                                  params.MAX_ITERS, params.GAMMA,params.DECREASING_GAMMA, params.LOG_LAMBDA,
                                                   params.RIDGE_LAMBDA)
         y_preds = []
         for i in range(len(optimal_ws)):
