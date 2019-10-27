@@ -5,6 +5,10 @@ import feature_engineering as f_e
 import params
 import proj1_helpers as helpers
 
+"""
+The big grid search file: used to find the best parameters for each group.
+"""
+
 
 ridge_lambda_range = [10**-(i+1) for i in range(15)]
 max_iter_range = [25, 30, 50]
@@ -14,6 +18,22 @@ true_false = [True, False]
 
 
 def ridge_regression_grid_search(tX, y, ridge_lambda_range):
+    """
+    Do a local prediction on tX and y for each lambda in ridge_lambda_range using ridge regression.
+
+    Parameters
+    ----------
+    tX: array
+        The features matrix
+    y: array
+        The labels
+    ridge_lambda_range: array
+        The lambdas we want to try
+
+    Returns
+    -------
+    None
+    """
     accuracies = []
     for ridge_lambda in ridge_lambda_range:
         accuracies.append(pred.locally_predict(tX, y, counts=len(tX), implementation=1, group=False, ridge_lambda=ridge_lambda))
@@ -22,6 +42,29 @@ def ridge_regression_grid_search(tX, y, ridge_lambda_range):
 
 
 def reg_logistic_regression_grid_search(tX, y, group_number, max_iter_range, gamma_range, log_lambda_range):
+    """
+    Do a local prediction on tX and y for each max_iter in max_iter_range, each gamma in gamma_range, and each lambda
+    in log_lambda_range, using regularized logistic regression.
+
+    Parameters
+    ----------
+    tX: array
+        The features matrix
+    y: array
+        The labels
+    group_number: int
+        The index of the current group
+    max_iter_range: array
+        The max_iter parameters we want to try
+    gamma_range: array
+        The gamma parameters we want to try
+    log_lambda_range: array
+        The log_lambda parameters we want to try
+
+    Returns
+    -------
+    None
+    """
     accuracies = []
     print('Group {}'.format(group_number))
     for max_iter in max_iter_range:
