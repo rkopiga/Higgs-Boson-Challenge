@@ -10,6 +10,7 @@ PRI_jet_num_max_value = 3
 PRI_jet_num_index = 22
 PHIs_indices = [15, 18, 20, 25, 28]
 PRI_jet_num_new_index = PRI_jet_num_index - 3
+INITIAL_FEATURE_COLUMN = 30
 # /!\ -------------------------- /!\
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------

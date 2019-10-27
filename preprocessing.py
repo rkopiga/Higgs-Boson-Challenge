@@ -13,7 +13,6 @@ def preprocess(
         ids,
         shuffle=params.SHUFFLE_DATA,
         remove_phis=params.REMOVE_PHIS,
-        add_diff_phis=params.ADD_DIFF_PHIS,
         unwanted_value=params.UNWANTED_VALUE,
         pri_jet_num_index=params.PRI_jet_num_index,
         group=params.GROUP,
@@ -93,6 +92,11 @@ def preprocess(
         points if no grouping is used)
     """
     print('\tPreprocessing...')
+    print('REMOVE PHIS :',remove_phis)
+    print('ADD PHIS :',add_diff_phis)
+    print('REMOVE INV FEATURES', remove_inv_features)
+    print('STD', std)
+    print('REPLACE OUTLIERS', replace_outliers)
     masks = None
     counts = None
 
@@ -100,12 +104,8 @@ def preprocess(
         y, tX, ids = shuffle_data(y, tX, ids)
 
     if remove_phis:
-        initial_feature_number = 30
+        initial_feature_number = params.INITIAL_FEATURE_COLUMN - len(params.PHIs_indices)
         tX = handle_angle_phis(tX, add_diff_phis)
-        pri_jet_num_index = params.PRI_jet_num_new_index
-        phi_replace_unwanted_value = replace_unwanted_value_by_value(tX[:, initial_feature_number + 1:], unwanted_value,
-                                                                     'median')
-        tX[:, initial_feature_number + 1:] = phi_replace_unwanted_value
 
     if group:
         if group_1:
@@ -220,16 +220,6 @@ def handle_angle_phis(tX, add_diff_phis):
     new_tX = tX
     PHIS_features = np.take(tX, params.PHIs_indices, axis=1)
     diff_features = PHIS_features[:, 0].reshape(PHIS_features.shape[0], 1)
-    if add_diff_phis:
-        column_phis = PHIS_features.shape[1]
-        for i in range(column_phis):
-            if i != column_phis - 1:
-                phi_feature = PHIS_features[:, i].reshape(PHIS_features.shape[0], 1)
-                subtracted_features = np.subtract(PHIS_features[:, i + 1:], phi_feature)
-                diff_features = np.hstack((diff_features, subtracted_features))
-
-        diff_features = diff_features[:, 1:]
-        new_tX = np.hstack((new_tX, diff_features))
     new_tX = np.delete(new_tX, params.PHIs_indices, axis=1)
     return new_tX
 

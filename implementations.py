@@ -8,6 +8,25 @@ def gamma_function(step, r=params.r):
 
 
 def mean_square_error(y, tx, w):
+    """
+    Mean square error (MSE) cost function.
+    
+    Parameters
+    ----------
+    y: array
+        The outputs
+    tx: array
+        The inputs
+    w: array
+        The weight vector
+
+    Returns
+    -------
+    (loss, loss_gradient): (scalar, scalar)
+        the loss computed according to the mean square,
+        the gradient of the loss according to the weights w
+      
+    """    
     e = y - tx @ w
     N = tx.shape[0]
     loss = (e.T @ e) / (2 * N)
@@ -18,22 +37,22 @@ def mean_square_error(y, tx, w):
 def mean_absolute_error(y, tx, w):
     """
     Mean absolute error (MAE) cost function.
-    Pros: convex,
-    Cons:
 
     Parameters
     ----------
-    y: vector
+    y: array
         The outputs
-    tx: vector
+    tx: array
         The inputs
-    w: vector
+    w: array
         The weight vector
 
     Returns
     -------
-    (loss, loss_gradient):
-        TODO
+    (loss, loss_gradient): (scalar, scalar) 
+        the loss computed according to the mean absolute,
+        the gradient of the loss
+        
     """
     e = y - tx @ w
     N = len(tx)
@@ -43,6 +62,22 @@ def mean_absolute_error(y, tx, w):
 
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
+    """
+    Least square using gradient descent.
+    
+    Parameters
+    ----------
+    y: array
+        The outputs
+    tx: array
+        The inputs
+
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    """     
     w = initial_w
     loss = None
     for i in range(max_iters):
@@ -52,6 +87,22 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+    """
+    Least square using stochastic gradient descent.
+    
+    Parameters
+    ----------
+    y: array
+        The outputs
+    tx: array
+        The inputs
+
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    """     
     w_temp = initial_w
     batch_size = 1
     loss = None
@@ -65,12 +116,45 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 
 
 def compute_stoch_gradient(y, tx, w):
+    """
+    Compute the gradient of the loss. It will be used in the stochastic gradient regression.
+    
+    Parameters
+    ----------
+    y: array
+        The outputs
+    tx: array
+        The inputs
+
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    """ 
+        
     e = y - tx.dot(w)
     grad = -tx.T.dot(e) / len(e)
     return grad, e
 
 
 def least_squares(y, tx):
+    """
+    Least square using normal equations.
+    
+    Parameters
+    ----------
+    y: array
+        The outputs
+    tx: array
+        The inputs
+
+    Returns
+    -------
+    (w, loss):
+        the last weight vector of the method, 
+        and the corresponding loss value (cost function)
+    """     
     tx_T = tx.T
     w = np.linalg.inv(tx_T @ tx) @ tx_T @ y
     loss, _ = mean_square_error(y, tx, w)
@@ -79,13 +163,13 @@ def least_squares(y, tx):
 
 def ridge_regression(y, tx, lambda_):
     """
-    Ridge regression using normal equations.
+    Ridge regression using normal equations. It is the same as ridge_regression if lambda_ equals 0.
     
     Parameters
     ----------
-    y: vector
+    y: array
         The outputs
-    tx: vector
+    tx: array
         The inputs
     lambda_: scalar
         The regularizer
@@ -107,6 +191,15 @@ def ridge_regression(y, tx, lambda_):
 def logistic_function(z):
     """
     Computes logistic function of scalar or array
+    
+    Parameter
+    ---------
+    z: scalar or array
+    
+    Returns
+    -------
+    logistic_value:
+        the value returned by the sigmoid function evaluated on z 
     """
     logistic_value = np.exp(z)/(1 + np.exp(z))
     return logistic_value
@@ -118,9 +211,9 @@ def logistic_loss(y, tx, w, lambda_):
     
     Parameters
     ----------
-    y: vector
+    y: array
         The outputs
-    tx: vector
+    tx: array
         The inputs
     w: vector
         Vector of weights
@@ -140,9 +233,9 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreas
     
     Parameters
     ----------
-    y: vector
+    y: array
         The outputs
-    tx: vector
+    tx: array
         The inputs
     lambda_:
         define value of regulator in cost function
@@ -180,9 +273,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=Fal
     
     Parameters
     ----------
-    y: vector
+    y: array
         The outputs
-    tx: vector
+    tx: array
         The inputs
     initial_w: vector
         Initial value of weights

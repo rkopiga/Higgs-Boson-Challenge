@@ -9,6 +9,41 @@ import implementations as impl
 def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
                     cross_validation=params.CROSS_VALIDATION, k=params.K, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
                     decreasing_gamma=params.DECREASING_GAMMA, log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
+    """ Predicts locally the accruacy of a model according to various parameters.
+    
+    Parameters
+    ----------
+    
+    tX: array
+        The feature matrix
+    y:  array
+        The output array
+    counts: list
+        The list containing the number of points for each groups
+    implementation: integer
+        The integer that determine which type of regression is used (0 = LEAST_SQUARES, 1 = RIDGE_REGRESSION,
+        3 = LOGISTIC_REGRESSION)
+    group: boolean
+        Either the dataset is divided into groups or not
+    ratio: real number
+        The ratio used in cross-validation
+    cross_validation: boolean
+        Either the cross validation is performed or not
+    max_iter: integer
+        Number of iterration for the gradient descent (if performed)
+    gamma: real number
+        gamma parameter for GD or SGD
+    log_lamda: real number
+        lambda parameter for logistic regression
+    ridge_lambda: real number
+        lambda parameter for ridge regression 
+        
+        
+    Return
+    ------
+    
+    Either does a cross validation on given dataset and parameters or not. In both cases, displays the accuracy on local.
+    """    
     if group:
         if cross_validation:
             return cross_validate_grouped(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda,
@@ -35,6 +70,23 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
 
 
 def separate_data(tX, y, ratio):
+    """
+    Separate the dataset according to the ration
+    
+    Parameters 
+    ----------
+    
+    tX: array
+        The feature matrix
+    y: array
+        The output
+    
+    Return
+    ------
+    
+    (tX_train, y_train, tX_sub_test, y_sub_test): array
+        The data matrix and the output separated according to training set and test set.
+    """    
     index = int(len(y) * ratio)
     tX_train = tX[:index]
     y_train = y[:index]
@@ -44,6 +96,25 @@ def separate_data(tX, y, ratio):
 
 
 def separate_data_grouped(tX_grouped, y_grouped, ratio):
+    """
+    Performs separate_data on a list of dataset
+    
+    Parameters 
+    ----------
+    
+    tX_grouped: list
+        The list of feature matrices
+    y_grouped: list
+        The list of label arrays
+    ratio: integer
+        Ration according to which the dataset will be separated
+    
+    Return
+    ------
+    
+    (tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped): list
+        List of data matrices and outputs separated according to training set and test set.
+    """    
     tX_train_grouped = []
     y_train_grouped = []
     tX_sub_test_grouped = []
@@ -58,6 +129,34 @@ def separate_data_grouped(tX_grouped, y_grouped, ratio):
 
 
 def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamma, decreasing_gamma, log_regulator, ridge_lambda):
+    """
+    Find the optimal weights by training the data set
+    
+    Parameters 
+    ----------
+    
+    tX: array
+        The feature matrices
+    y: array
+        The output
+    log_initial_w: array
+        inital weights in order to perform GD or SGD
+    log_max_iters: integer
+        number of iterations to perform GD or SGD
+    log_gamma: float
+        gamma parameter to perform GD or SGD
+    log_regulator: float
+        lambda to perform logistic regression
+    ridge_lambda: float
+        lambda to perform ridge regression
+      
+    Return
+    ------
+    
+    optimal_w = array
+        Optimal weights.
+
+    """    
     optimal_w = None
     if implementation == 0:
         optimal_w, _ = impl.least_squares(y, tX)
@@ -70,6 +169,34 @@ def find_optimal_w(tX, y, implementation, log_initial_w, log_max_iters, log_gamm
 
 def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w, log_max_iters, log_gamma, decreasing_gamma,
                             log_regulator, ridge_lambda):
+    """
+    Perform find_optimal_w on list of data matrices
+    
+    Parameters 
+    ----------
+    
+    tX_grouped: list
+        List of feature matrices
+    y: array
+        The output
+    log_initial_w: array
+        inital weights in order to perform GD or SGD
+    log_max_iters: integer
+        number of iterations to perform GD or SGD
+    log_gamma: float
+        gamma parameter to perform GD or SGD
+    log_regulator: float
+        lambda to perform logistic regression
+    ridge_lambda: float
+        lambda to perform ridge regression
+      
+    Return
+    ------
+    
+    optimal_w = array
+        Optimal weights.
+
+    """        
     optimal_ws = []
     for i in range(len(tX_grouped)):
         optimal_ws.append(find_optimal_w(tX_grouped[i], y_grouped[i], implementation, log_initial_w[i], log_max_iters,
@@ -80,6 +207,24 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
 
 
 def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, group_number=0):
+    """
+    Compared the labels from test set to the one issued with the optimal weights found
+    
+    Parameters 
+    ----------
+    
+    y_pred_clipped: array
+        The output predicted with the optimal weights (-1 or 1)
+    y_sub_test: array
+        The outputs of the test subset
+      
+    Return
+    ------
+    
+    accuracy = float
+        Accuracy.
+
+    """    
     comparison = np.abs(y_pred_clipped + y_sub_test)
     unique, counts = np.unique(comparison, return_counts=True)
     accuracy = counts[1] / len(comparison)
@@ -96,6 +241,24 @@ def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, gr
 
 
 def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts):
+    """
+    Performs compage_labels of a list of data matrices
+    
+    Parameters 
+    ----------
+    
+    y_pred_grouped: array
+        The list of outputs predicted with the optimal weights (-1 or 1)
+    y_sub_test_grouped: array
+        The list of outputs of the test subset
+      
+    Return
+    ------
+    
+    accuracies = list
+        List of accuracy for each group.
+
+    """    
     accuracies = []
     for i in range(len(y_pred_clipped_grouped)):
         accuracies.append(compare_labels(y_pred_grouped[i], y_pred_clipped_grouped[i], y_sub_test_grouped[i],
@@ -105,6 +268,36 @@ def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_gr
 
 
 def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, count, group_number=0):
+    """
+    Cross validation: Separate the data according to the ratio and perform the local training/testing.  
+    
+    Parameters 
+    ----------
+    
+    tX: array
+        The feature matrix
+    y: array
+        The output
+    implementation: integer
+        Determines which regression is used
+    max_iter: integer
+        Number of interation for GD or SGD
+    gamma: float
+        gamma parameter for GD or SGD
+    log_lambda: float
+        lambda parameter for logistic regression
+    rigde_lambda: float
+        lambda parameter for ridge regression
+    count: integer
+        Cardinality of the output
+      
+    Return
+    ------
+    
+    accuracies = float
+        Accuracy.
+
+    """    
     n_parts = int(1/(1-ratio))
     tX_split = np.asarray(np.array_split(tX, n_parts, axis=0))
     y_split = np.array_split(y, n_parts, axis=0)
@@ -141,6 +334,36 @@ def cross_validate(tX, y, ratio, k, implementation, max_iter, gamma, decreasing_
 
 
 def cross_validate_grouped(tX_grouped, y_grouped, ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, counts):
+    """
+    Perform cross validation on list of data matrices 
+    
+    Parameters 
+    ----------
+    
+    tX_grouped: list
+        The list of data matrices
+    y_grouped: array
+        The list of output
+    implementation: integer
+        Determines which regression is used
+    max_iter: integer
+        Number of interation for GD or SGD
+    gamma: float
+        gamma parameter for GD or SGD
+    log_lambda: float
+        lambda parameter for logistic regression
+    rigde_lambda: float
+        lambda parameter for ridge regression
+    counts: list 
+        List of cardinality of the output of each group 
+      
+    Return
+    ------
+    
+    accuracies = list
+        List of accuracies.
+
+    """        
     accuracies = []
     for i in range(len(tX_grouped)):
         accuracies.append(cross_validate(tX_grouped[i], y_grouped[i], ratio, k, implementation, max_iter, gamma, decreasing_gamma, log_lambda, ridge_lambda, counts[i], i))
