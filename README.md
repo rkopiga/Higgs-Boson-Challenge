@@ -8,17 +8,31 @@ The only allowed library was numpy.
 
 **Team**: Yann Meier, Kopiga Rasiah, and Rayan Daod Nathoo
 
+**Results**: 
+
+- 8th team over TODO on AIcrowd
+- Categorical accuracy: 0.837
+- F1-Score: 0.755 
+
+
 **Deadline**: October 28th, 2019
 
 ## Getting Started
 
-To run our Machine Learning algorithm with the best parameters we found, please clone this project, download the datasets on Aicrowd, put it in a folder called "data" inside the repository, and simply run the run.py file with the following command:
+To run our Machine Learning algorithm with the best parameters we found:
+
+- Clone this project
+- Download the datasets on AIcrowd
+- Put it in a folder called "data" inside the repository
+- Run the run.py file with the following command:
 
 `python run.py`
 
+(Default value parameters are the ones giving the best performance we found)
+
 ## Prerequisites
 
-Python, Numpy.
+Python, Numpy
 
 
 ## Parameters
