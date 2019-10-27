@@ -18,7 +18,7 @@ REMOVE_PHIS = True
 ADD_DIFF_PHIS = False  # TODO
 GROUP_1 = False
 GROUP_2 = True
-LESS_GROUPS = False
+LESS_GROUPS = True
 GROUPS_TO_MERGE = [2, 3]
 GROUP_2_ADDITIONAL_SPLITTING = True
 GROUP = GROUP_1 or GROUP_2
@@ -55,17 +55,21 @@ K = 3
 # 0 = Least-squares
 # 1 = Ridge-regression
 # 2 = Logistic-regression
-IMPLEMENTATION = 1
+IMPLEMENTATION = 2
 
 # Logistic-regression parameters
-MAX_ITERS = 50
+MAX_ITERS = 30
 GAMMA = 0.05
 DECREASING_GAMMA = True
-r = 1  # Between 0.5 and 1
-LOG_LAMBDA = 0
+r = 0.5  # Between 0.5 and 1
+LOG_LAMBDA = 0.000000001
 
 # Ridge-regression parameters
-RIDGE_LAMBDA = 0.000000001
+# RIDGE_LAMBDA = 0.000000001
+# RIDGE_LAMBDA = 0.0001
+# RIDGE_LAMBDA = 0.0000001
+# RIDGE_LAMBDA = 0.00000001
+RIDGE_LAMBDA = 0.00000001
 
 
 # TODO add arguments to the function to be able to put it at the beginning of locally_predict

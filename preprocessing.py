@@ -8,65 +8,89 @@ Preprocessing pipeline
 
 
 def preprocess(
-    y,
-    tX,
-    ids,
-    shuffle=params.SHUFFLE_DATA,
-    remove_phis=params.REMOVE_PHIS,
-    add_diff_phis=params.ADD_DIFF_PHIS,
-    unwanted_value=params.UNWANTED_VALUE,
-    pri_jet_num_index=params.PRI_jet_num_index,
-    group=params.GROUP,
-    group_1=params.GROUP_1,
-    group_2=params.GROUP_2,
-    less_groups=params.LESS_GROUPS,
-    replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
-    value=params.VALUE,
-    remove_inv_features=params.REMOVE_INV_FEATURES,
-    std=params.STD,
-    replace_outliers=params.REPLACE_OUTLIERS,
-    outlier_value=params.OUTLIER_VALUE,
-    threshold=params.THRESHOLD,
-    remove_duplicate_features=params.REMOVE_DUPLICATE_FEATURES):
+        y,
+        tX,
+        ids,
+        shuffle=params.SHUFFLE_DATA,
+        remove_phis=params.REMOVE_PHIS,
+        add_diff_phis=params.ADD_DIFF_PHIS,
+        unwanted_value=params.UNWANTED_VALUE,
+        pri_jet_num_index=params.PRI_jet_num_index,
+        group=params.GROUP,
+        group_1=params.GROUP_1,
+        group_2=params.GROUP_2,
+        group_2_additional_splitting=params.GROUP_2_ADDITIONAL_SPLITTING,
+        less_groups=params.LESS_GROUPS,
+        replace_unwanted_value=params.REPLACE_UNWANTED_VALUE,
+        value=params.VALUE,
+        remove_inv_features=params.REMOVE_INV_FEATURES,
+        std=params.STD,
+        replace_outliers=params.REPLACE_OUTLIERS,
+        outlier_value=params.OUTLIER_VALUE,
+        threshold=params.THRESHOLD,
+        remove_duplicate_features=params.REMOVE_DUPLICATE_FEATURES):
     """
-    Preprocess the dataset
+    Preprocess the dataset.
 
     Parameters
     ----------
     y: array
         The labels
-    tX: 2D-matrix
+    tX: array
         The features matrix
     ids: array
         The ids of the data points
+    shuffle: boolean
+        Rather we shuffle the data points or not
+    remove_phis: boolean
+        Rather we remove the phi-features or not
+    add_diff_phis: boolean
+        Rather we add the differences between phis before removing it
+    unwanted_value: int
+        The value indicating a missing/not-supposed-to-be-there measurement
+    pri_jet_num_index: int
+        The index at which the PRI_jet_num is in the features matrix
+    group: boolean
+        Rather we organize the dataset in groups or not
     group_1: boolean
-        Rather we split the dataset with the split function 1 or not
+        Rather we split the dataset according to the appearance of UNWANTED_VALUE or not
     group_2: boolean
-        Rather we split the dataset with the split function 2 or not
+        Rather we split the dataset according to the value of PRI_jet_num or not
+    group_2_additional_splitting: boolean
+        When splitting with group_2, rather we split each group again in 2 groups according to DER_mass_MMC or not
+    less_groups: boolean
+        When splitting with group_2, rather we split the dataset in 3 groups instead of 4 or not
     replace_unwanted_value: boolean
         Rather we replace all the unwanted values by the mean of the remaining values in each feature or not
+    value: str
+        Indicating with which value to replace the UNWANTED_VALUE (mean, median, etc.)
     remove_inv_features: boolean
         Rather we remove all the invariable features or not
     std: boolean
         Rather we standardize each feature in each group or not
     replace_outliers: boolean
         Rather we replace the outliers in each group or not
+    outlier_value: str
+        Indicating with which value to replace the outliers (clip, mean, etc.)
     threshold: integer
         Parameter that defines an outlier
+    remove_duplicate_features: boolean
+        Rather we remove the duplicate features at the end or not
 
     Returns
     -------
-    y: 2D-array
-        The labels
-    tX: 2D-list
-        The features matrix
-    ids: 2D-array
-        The data points' ids
-    masks: 2D-matrix
-        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
-        or None depending on the chosen split function
-    counts: array
-        The number of data points belonging to each group or None depending on the chosen split function
+    y: list/array
+        The labels (with groups or not)
+    tX: list/array
+        The (list of) features matrix
+    ids: list/array
+        The ids of the data points (with groups or not)
+    masks: list/array or None
+        The features of each group expressed in terms of 1 (which means there is an UNWANTED_VALUE at this position)
+        and 0 (no UNWANTED_VALUE at this position), or None depending on the chosen split function
+    counts: array (or int)
+        The number of data points belonging to each group depending on the chosen split function (or the number of data
+        points if no grouping is used)
     """
     print('\tPreprocessing...')
     masks = None
@@ -79,16 +103,17 @@ def preprocess(
         initial_feature_number = 30
         tX = handle_angle_phis(tX, add_diff_phis)
         pri_jet_num_index = params.PRI_jet_num_new_index
-        phi_replace_unwanted_value = replace_unwanted_value_by_value(tX[:,initial_feature_number+1:],unwanted_value,'median')
-        tX[:,initial_feature_number+1:] = phi_replace_unwanted_value
-    
+        phi_replace_unwanted_value = replace_unwanted_value_by_value(tX[:, initial_feature_number + 1:], unwanted_value,
+                                                                     'median')
+        tX[:, initial_feature_number + 1:] = phi_replace_unwanted_value
+
     if group:
         if group_1:
             y, tX, ids, masks, counts = split_in_groups_1(y, tX, ids, unwanted_value)
         elif group_2:
             y, tX, ids, masks, counts = split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups)
             # check_uniqueness_in_group(tX, unwanted_value)
-            if params.GROUP_2_ADDITIONAL_SPLITTING:
+            if group_2_additional_splitting:
                 y, tX, ids, masks, counts = additional_splitting(y, tX, ids, unwanted_value)
         if remove_inv_features:
             tX = remove_invariable_features_grouped(tX)
@@ -96,11 +121,12 @@ def preprocess(
             tX = replace_unwanted_value_by_value_grouped(tX, unwanted_value, value)
         if std:
             tX = standardize_grouped(tX)
-        if replace_outliers: 
+        if replace_outliers:
             tX = replace_outliers_grouped(tX, threshold, outlier_value)
         if remove_duplicate_features:
             tX = helper.remove_duplicate_columns_grouped(tX)
     else:
+        counts = len(y)
         if remove_inv_features:
             tX = remove_invariable_features(tX)
         if replace_unwanted_value:
@@ -116,6 +142,20 @@ def preprocess(
 
 
 def check_uniqueness_in_group(tX_grouped, unwanted_value):
+    """
+    Check that according to the unwanted_value, we cannot split the groups more than they currently are.
+
+    Parameters
+    ----------
+    tX_grouped: list
+        The list of features matrix (one for each group)
+    unwanted_value: int
+        The value based on which we will say if we can split the groups even more
+
+    Returns
+    -------
+    None
+    """
     masks_check = []
     counts_check = []
     for i in range(len(tX_grouped)):
@@ -125,35 +165,73 @@ def check_uniqueness_in_group(tX_grouped, unwanted_value):
         counts_check.append(masks_and_counts[1])
     print(masks_check)
     print(counts_check)
+    return None
 
 
 def shuffle_data(y, tX, ids):
+    """
+    Shuffle the dataset.
+
+    Parameters
+    ----------
+    y: array
+        The labels
+    tX: array
+        The features matrix
+    ids: array
+        The ids of the data points
+
+    Returns
+    -------
+    y_shuffled: array
+        The labels shuffled
+    tX_shuffled: array
+        The features matrix shuffled
+    ids_shuffled: array
+        The ids of the data points, shuffled
+    """
     y = y.reshape(y.shape[0], 1)
     ids = ids.reshape(ids.shape[0], 1)
     model_data = np.hstack((tX, y, ids))
     np.random.shuffle(model_data)
-    ids_shuffled = model_data[:, model_data.shape[1]-1]
-    y_shuffled = model_data[:, model_data.shape[1]-2]
-    tX_shuffled = model_data[:, :model_data.shape[1]-2]
+    ids_shuffled = model_data[:, model_data.shape[1] - 1]
+    y_shuffled = model_data[:, model_data.shape[1] - 2]
+    tX_shuffled = model_data[:, :model_data.shape[1] - 2]
     return y_shuffled, tX_shuffled, ids_shuffled
 
 
 def handle_angle_phis(tX, add_diff_phis):
-    features = tX
+    """
+    Add some features corresponding to the difference of the phi-features if add_diff_phis is set to True,
+    then delete the phi-features from the features matrix.
+
+    Parameters
+    ----------
+    tX: array
+        The features matrix
+    add_diff_phis: boolean
+        Rather we add the features corresponding to the difference of the phi-features or not
+
+    Returns
+    -------
+    new_tX: array
+        The new features matrix
+    """
+    new_tX = tX
     PHIS_features = np.take(tX, params.PHIs_indices, axis=1)
     diff_features = PHIS_features[:, 0].reshape(PHIS_features.shape[0], 1)
     if add_diff_phis:
         column_phis = PHIS_features.shape[1]
         for i in range(column_phis):
-            if i != column_phis-1:
+            if i != column_phis - 1:
                 phi_feature = PHIS_features[:, i].reshape(PHIS_features.shape[0], 1)
-                subtracted_features = np.subtract(PHIS_features[:, i+1:], phi_feature)
+                subtracted_features = np.subtract(PHIS_features[:, i + 1:], phi_feature)
                 diff_features = np.hstack((diff_features, subtracted_features))
-                
+
         diff_features = diff_features[:, 1:]
-        features = np.hstack((features, diff_features))
-    features = np.delete(features, params.PHIs_indices, axis=1)
-    return features
+        new_tX = np.hstack((new_tX, diff_features))
+    new_tX = np.delete(new_tX, params.PHIs_indices, axis=1)
+    return new_tX
 
 
 def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_grouped):
@@ -164,26 +242,26 @@ def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_group
     ----------
     y: array
         The labels
-    tX: 2D-matrix
+    tX: array
         The features matrix
     ids: array
         The ids of the data points
     condition:
         The extracting condition
     y_grouped: array
-        The grouped labels' array to append the next group to
+        The grouped labels' list to append the next group to
     tX: 2D-matrix
-        The grouped features matrix's array to append the next group to
+        The grouped features matrix's list to append the next group to
     ids: array
-        The grouped data points' ids array to append the next group to
+        The grouped data points' ids list to append the next group to
 
     Returns
     -------
-    y_grouped: 2D-array
+    y_grouped: list
         The labels grouped
-    tX_grouped: object (array of arrays of data points)
-        The features matrix grouped
-    ids_grouped: 2D-array
+    tX_grouped: list
+        The list of features matrix
+    ids_grouped: list
         The data points' ids grouped
     """
 
@@ -204,21 +282,24 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
     ----------
     y: array
         The labels
-    tX: 2D-matrix
+    tX: array
         The features matrix
     ids: array
         The ids of the data points
+    unwanted_value:
+        The value according to which we form the groups
 
     Returns
     -------
-    y_grouped: 2D-array
+    y_grouped: list
         The labels grouped
-    tX_grouped: object (array of arrays of data points)
+    tX_grouped: list
         The features matrix grouped
-    ids_grouped: 2D-array
+    ids_grouped: list
         The data points' ids grouped
-    masks: 2D-matrix
-        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
+    masks: array
+        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and
+        0 otherwise
     counts: array
         The number of data points belonging to each group
     """
@@ -236,30 +317,35 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
 
 def split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups=False):
     """
-        Split the dataset into groups according to the value of the feature PRI_jet_column (also called PRI_jet_num).
+    Split the dataset into groups according to the value of the feature PRI_jet_num.
 
-        Parameters
-        ----------
-        y: array
-            The labels
-        tX: 2D-matrix
-            The features matrix
-        ids: array
-            The ids of the data points
+    Parameters
+    ----------
+    y: array
+        The labels
+    tX: array
+        The features matrix
+    ids: array
+        The ids of the data points
+    pri_jet_num_index: int
+        The index at which the PRI_jet_num is in the features matrix
+    less_groups: boolean
+        Rather we form 3 groups instead of 4 (by merging the last 2)
 
-        Returns
-        -------
-        y_grouped: 2D-array
-            The labels grouped
-        tX_grouped: object (array of arrays of data points)
-            The features matrix grouped
-        ids_grouped: 2D-array
-            The data points' ids grouped
-        masks: 2D-matrix
-            The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and 0
-        counts: array
-            The number of data points belonging to each group
-        """
+    Returns
+    -------
+    y_grouped: list
+        The labels grouped
+    tX_grouped: list
+        The features matrix grouped
+    ids_grouped: list
+        The data points' ids grouped
+    masks: array
+        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and
+        0 otherwise
+    counts: array
+        The number of data points belonging to each group
+    """
     y_grouped, tX_grouped, ids_grouped, masks, counts = [], [], [], [], []
     if less_groups:
         for i in range(params.PRI_jet_num_max_value):
@@ -297,6 +383,34 @@ def split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups=False):
 
 
 def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
+    """
+    Splits each group of an existing grouping with the split_in_groups_1 function.
+
+    Parameters
+    ----------
+    y_grouped: list
+        The labels grouped
+    tX_grouped: list
+        The features matrix grouped
+    ids_grouped: list
+        The ids of the data points, grouped
+    unwanted_value:
+        The value according to which we form the groups
+
+    Returns
+    -------
+    y_grouped_new: list
+        The labels grouped
+    tX_grouped_new: list
+        The features matrix grouped
+    ids_grouped_new: list
+        The data points' ids grouped
+    masks_new: array
+        The features of each group expressed in terms of 1 (means there is a UNWANTED_VALUE at this position) and
+        0 otherwise
+    counts_new: array
+        The number of data points belonging to each group
+    """
     y_grouped_new, tX_grouped_new, ids_grouped_new, masks_new, counts_new = [], [], [], [], []
     for i in range(len(tX_grouped)):
         y, tX, ids, masks, counts = split_in_groups_1(y_grouped[i], tX_grouped[i], ids_grouped[i], unwanted_value)
@@ -311,18 +425,22 @@ def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
 
 def replace_unwanted_value_by_value(tX, unwanted_value, value):
     """
-    In each feature, replace the unwanted value by the mean of the remaining values.
+    In each feature, replace the unwanted value by the mean or median (according to the parameter value)
+    of the remaining values.
 
     Parameters
     ----------
-    tX: 2D-array
+    tX: array
         The features matrix
-    unwanted_value: float
+    unwanted_value: int
         The specific value we want to replace
+    value: str
+        Indicating with which value to replace the UNWANTED_VALUE (mean or median)
 
     Returns
     -------
-    The new matrix tX after replacing the unwanted value with the mean of the remaining features.
+    new_tX: array
+        The new features matrix
     """
     features = tX.T
     for i in range(len(features)):
@@ -335,18 +453,21 @@ def replace_unwanted_value_by_value(tX, unwanted_value, value):
 
 def replace_unwanted_value_by_value_grouped(tX_grouped, unwanted_value, value):
     """
-    For each group and in each feature, replace the unwanted value by the mean of the remaining values in that features.
+    For each group, replace the unwanted value by the mean of the remaining values in each feature.
 
     Parameters
     ----------
-    tX_grouped: list of arrays of data points
-        The features matrix grouped
-    unwanted_value: float
+    tX_grouped: list
+        The list of features matrix
+    unwanted_value: int
         The specific value we want to replace
+    value: str
+        Indicating with which value to replace the UNWANTED_VALUE (mean or median)
 
     Returns
     -------
-    The new matrix tX_grouped after replacing the unwanted value with the mean of the remaining features in each group.
+    new_tX: list
+        The new list of features matrices
     """
     tX_grouped_new = []
     for i in range(len(tX_grouped)):
@@ -362,12 +483,13 @@ def remove_invariable_features(tX):
 
     Parameters
     ----------
-    tX: 2D-array
+    tX: array
         The features matrix
 
     Returns
     -------
-    The features matrix cleaned of every invariable features.
+    new_tX: array
+        The new features matrix
     """
 
     features = tX.T
@@ -378,17 +500,17 @@ def remove_invariable_features(tX):
 
 def remove_invariable_features_grouped(tX_grouped):
     """
-    In each group of data points, drop the features/columns that never change.
+    Drop the features/columns that never change for each group.
 
     Parameters
     ----------
-    tX_grouped: list of arrays of data points
-        The features matrix grouped
+    tX_grouped: list
+        The list of features matrices
 
     Returns
     -------
-    tX_clean: array of arrays of data points
-       The features matrix grouped and cleaned of every invariable features
+    tX_clean: list
+       The cleaned list of features matrices
     """
 
     tX_clean = []
@@ -399,16 +521,17 @@ def remove_invariable_features_grouped(tX_grouped):
 
 def standardize(tX):
     """
-    Standardize each feature/column.
+    Standardize each feature of the feature matrix.
 
     Parameters
     ----------
-    tX: 2D-array
+    tX: array
         The features matrix
 
     Returns
     -------
-    The features matrix standardized
+    new_tX: array
+        The new features matrix
     """
     features = tX.T
     features_len = len(features)
@@ -420,17 +543,17 @@ def standardize(tX):
 
 def standardize_grouped(tX_grouped):
     """
-    In each group of data points, standardize each feature/column.
+    Standardize each feature of the feature matrix for each group.
 
     Parameters
     ----------
-    tX_grouped: array of arrays of data points
-        The features matrix grouped
+    tX_grouped: list
+        The list of features matrices
 
     Returns
     -------
-    tX_clean_std: array of arrays of data points
-       The features matrix grouped standardized
+    tX_clean_std: list
+       The new list of features matrices standardized
     """
 
     tX_clean_std = []
@@ -441,21 +564,21 @@ def standardize_grouped(tX_grouped):
 
 def replace_outliers_by_threshold(tX, threshold, outlier_value):
     """
-    In each feature, replace the outliers by the appropriate value.
+    Replace the outliers by the appropriate value in each feature.
     
     Parameters
     ----------
-    tX: array of data points 
+    tX: array
         The features matrix 
-    threshold: integer
+    threshold: float
         The parameter that defines how the value should be close to the mean
     
     Returns
     -------
-    tX: array of data points
-        The features matrix with less outliers
+    tX: array
+        The new features matrix with less outliers
     """
-    
+
     for j in range(tX.shape[1]):
         col = tX[:, j]
         values, indices = np.unique(col, return_index=True)
@@ -491,19 +614,19 @@ def replace_outliers_by_threshold(tX, threshold, outlier_value):
 
 def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
     """
-    In each group of data points, replace the outliers by the appropriate value.
+    Replace the outliers by the appropriate value in each feature, in each group.
 
     Parameters
     ----------
-    tX_grouped: array of arrays of data points
-        The features matrix grouped
-    threshold: integer
+    tX_grouped: list
+        The list of features matrices
+    threshold: float
         The parameter that defines how the value should be close to the mean
 
     Returns
     -------
-    tX_grouped: array of arrays of data points
-        The features matrix grouped with less outliers
+    tX_grouped: list
+        The new features matrix with less outliers
     """
     for i in range(len(tX_grouped)):
         tX_i = tX_grouped[i]
