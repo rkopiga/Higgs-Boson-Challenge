@@ -16,7 +16,6 @@ INITIAL_FEATURE_COLUMN = 30
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
 SHUFFLE_DATA = True
 REMOVE_PHIS = True
-ADD_DIFF_PHIS = False  # TODO
 GROUP_1 = False
 GROUP_2 = True
 LESS_GROUPS = True
