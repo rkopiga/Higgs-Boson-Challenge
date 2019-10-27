@@ -3,7 +3,7 @@ import params
 import proj1_helpers as helper
 
 """
-Preprocessing pipeline
+The preprocessing functions.
 """
 
 
@@ -199,7 +199,7 @@ def shuffle_data(y, tX, ids):
 
 def handle_angle_phis(tX):
     """
-     Delete the phi-features from the features matrix.
+    Delete the phi-features from the features matrix.
 
     Parameters
     ----------
@@ -228,14 +228,14 @@ def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_group
         The features matrix
     ids: array
         The ids of the data points
-    condition:
+    condition: array
         The extracting condition
     y_grouped: array
-        The grouped labels' list to append the next group to
-    tX: 2D-matrix
-        The grouped features matrix's list to append the next group to
-    ids: array
-        The grouped data points' ids list to append the next group to
+        The labels grouped
+    tX_grouped: list
+        The list of features matrices to append the next group to
+    ids_grouped: list
+        The list of ids of data points to append the next group to
 
     Returns
     -------
@@ -366,7 +366,7 @@ def split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups=False):
 
 def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
     """
-    Splits each group of an existing grouping with the split_in_groups_1 function.
+    Split each group of an existing grouping with the split_in_groups_1 function.
 
     Parameters
     ----------
@@ -407,8 +407,8 @@ def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
 
 def replace_unwanted_value_by_value(tX, unwanted_value, value):
     """
-    In each feature, replace the unwanted value by the mean or median (according to the parameter value)
-    of the remaining values.
+    Replace the unwanted value by the mean or median (according to the parameter value)
+    of the remaining values in each feature.
 
     Parameters
     ----------
@@ -430,7 +430,8 @@ def replace_unwanted_value_by_value(tX, unwanted_value, value):
             features[i][features[i] == unwanted_value] = np.mean(features[i][features[i] != unwanted_value])
         elif value == 'median':
             features[i][features[i] == unwanted_value] = np.median(features[i][features[i] != unwanted_value])
-    return features.T
+    new_tX = features.T
+    return new_tX
 
 
 def replace_unwanted_value_by_value_grouped(tX_grouped, unwanted_value, value):
@@ -477,7 +478,8 @@ def remove_invariable_features(tX):
     features = tX.T
     stds = np.std(features, axis=1)
     indices = np.where(stds == 0)
-    return np.delete(features, indices, 0).T
+    new_tX = np.delete(features, indices, 0).T
+    return new_tX
 
 
 def remove_invariable_features_grouped(tX_grouped):
@@ -495,10 +497,10 @@ def remove_invariable_features_grouped(tX_grouped):
        The cleaned list of features matrices
     """
 
-    tX_clean = []
+    new_tX_grouped = []
     for i in range(len(tX_grouped)):
-        tX_clean.append(remove_invariable_features(tX_grouped[i]))
-    return tX_clean
+        new_tX_grouped.append(remove_invariable_features(tX_grouped[i]))
+    return new_tX_grouped
 
 
 def standardize(tX):
@@ -520,7 +522,8 @@ def standardize(tX):
     means = np.reshape(np.mean(features, axis=1), [features_len, 1])
     stds = np.reshape(np.std(features, axis=1), [features_len, 1])
     features_std = (features - means) / stds
-    return features_std.T
+    new_tX = features_std.T
+    return new_tX
 
 
 def standardize_grouped(tX_grouped):
@@ -538,10 +541,10 @@ def standardize_grouped(tX_grouped):
        The new list of features matrices standardized
     """
 
-    tX_clean_std = []
+    new_tX_grouped = []
     for i in range(len(tX_grouped)):
-        tX_clean_std.append(standardize(tX_grouped[i]))
-    return tX_clean_std
+        new_tX_grouped.append(standardize(tX_grouped[i]))
+    return new_tX_grouped
 
 
 def replace_outliers_by_threshold(tX, threshold, outlier_value):
@@ -554,6 +557,8 @@ def replace_outliers_by_threshold(tX, threshold, outlier_value):
         The features matrix 
     threshold: float
         The parameter that defines how the value should be close to the mean
+    outlier_value: str
+        Indicating with which value to replace the UNWANTED_VALUE (clip, mean, or upper_lower_mean)
     
     Returns
     -------
@@ -561,8 +566,9 @@ def replace_outliers_by_threshold(tX, threshold, outlier_value):
         The new features matrix with less outliers
     """
 
-    for j in range(tX.shape[1]):
-        col = tX[:, j]
+    new_tX = tX
+    for j in range(new_tX.shape[1]):
+        col = new_tX[:, j]
         values, indices = np.unique(col, return_index=True)
         data = zip(values, indices)
         values_mean = np.mean(values)
@@ -581,17 +587,17 @@ def replace_outliers_by_threshold(tX, threshold, outlier_value):
         for v, index in outliers:
             if outlier_value == 'clip':
                 if v < values_mean:
-                    tX[index, j] = lower
+                    new_tX[index, j] = lower
                 else:
-                    tX[index, j] = upper
+                    new_tX[index, j] = upper
             elif outlier_value == 'mean':
-                tX[index, j] = values_mean
+                new_tX[index, j] = values_mean
             elif outlier_value == 'upper_lower_mean':
                 if v < values_mean:
-                    tX[index, j] = lower_mean
+                    new_tX[index, j] = lower_mean
                 else:
-                    tX[index, j] = upper_mean
-    return tX
+                    new_tX[index, j] = upper_mean
+    return new_tX
 
 
 def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
@@ -604,13 +610,15 @@ def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
         The list of features matrices
     threshold: float
         The parameter that defines how the value should be close to the mean
+    outlier_value: str
+        Indicating with which value to replace the UNWANTED_VALUE (clip, mean, or upper_lower_mean)
 
     Returns
     -------
     tX_grouped: list
         The new features matrix with less outliers
     """
-    for i in range(len(tX_grouped)):
-        tX_i = tX_grouped[i]
-        tX_grouped[i] = replace_outliers_by_threshold(tX_i, threshold, outlier_value)
-    return tX_grouped
+    new_tX_grouped = tX_grouped
+    for i in range(len(new_tX_grouped)):
+        new_tX_grouped[i] = replace_outliers_by_threshold(tX_grouped[i], threshold, outlier_value)
+    return new_tX_grouped
