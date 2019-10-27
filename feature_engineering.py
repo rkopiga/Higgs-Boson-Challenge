@@ -96,10 +96,6 @@ def feature_multiplication(tX):
     return new_tX
 
 
-def feature_multiplication_new(tX):
-    raise NotImplementedError
-
-
 def feature_multiplication_grouped(tX_grouped):
     new_tX_grouped = []
     for i in range(len(tX_grouped)):

@@ -13,6 +13,19 @@ def flatten_list(list_to_flatten):
     return flat_list
 
 
+def remove_duplicate_columns(tX):
+    features = tX.T
+    new_features, indices = np.unique(features, return_inverse=True, axis=0)
+    return new_features.T
+
+
+def remove_duplicate_columns_grouped(tX_grouped):
+    new_tX = []
+    for i in range(len(tX_grouped)):
+        new_tX.append(remove_duplicate_columns(tX_grouped[i]))
+    return new_tX
+
+
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     print('\tLoading data...')
