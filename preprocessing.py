@@ -90,10 +90,10 @@ def preprocess(
         points if no grouping is used)
     """
     print('\tPreprocessing...')
-    print('REMOVE PHIS :',remove_phis)
-    print('REMOVE INV FEATURES', remove_inv_features)
-    print('STD', std)
-    print('REPLACE OUTLIERS', replace_outliers)
+    print('\t\tREMOVE PHIS :',remove_phis)
+    print('\t\tREMOVE INV FEATURES', remove_inv_features)
+    print('\t\tSTD', std)
+    print('\t\tREPLACE OUTLIERS', replace_outliers)
     masks = None
     counts = None
 

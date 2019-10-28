@@ -10,12 +10,12 @@ The only allowed library was numpy.
 
 **Results**: 
 
-- 8th team over 226 on AIcrowd
+- 8th team over 226 on AIcrowd (28/10/2019, 19:13)
 - Categorical accuracy: 0.837
 - F1-Score: 0.754
 
 
-**Deadline**: October 28th, 2019
+**Deadline**: October 28th 2019, 23:59
 
 ## Getting Started
 
@@ -40,32 +40,32 @@ Python, Numpy
 
 - `gamma_function(step, r=params.r)`: Gamma function returning a gamma decreasing with the step number, according to the parameter `r` in `params.py`.
 
-- `mean_square_error(y, tx, w)`: Mean Squared Error (MSE)
+- `mean_square_error(y, tx, w)`: Compute the mean squared error (MSE).
 
-- `mean_absolute_error(y, tx, w)`: Mean Absolute Error (MAE)
+- `mean_absolute_error(y, tx, w)`: Compute the mean absolute error (MAE).
 
-- `least_squares_GD(y, tx, initial_w, max_iters, gamma)`: Least-squares Gradient Descent
+- `least_squares_GD(y, tx, initial_w, max_iters, gamma)`: Find the optimal weights with respect to the least-squares Gradient Descent.
 
-- `least_squares_SGD(y, tx, initial_w, max_iters, gamma)`: Least-squares Stochastic Gradient Descent
+- `least_squares_SGD(y, tx, initial_w, max_iters, gamma)`: Find the optimal weights with respect to the least-squares Stochastic Gradient Descent.
 
 - `compute_stoch_gradient(y, tx, w)`: Randomly select a data point and compute its gradient.
 
-- `least_squares(y, tx)`: Least-squares with direct resolution (Normal Equations)
+- `least_squares(y, tx)`: Find the optimal weights with respect to the least-squares with direct resolution (Normal Equations).
 
-- `ridge_regression(y, tx, lambda_)`: Ridge regression with direct resolution (Normal Equations)
+- `ridge_regression(y, tx, lambda_)`: Find the optimal weights with respect to the ridge regression with direct resolution (Normal Equations).
 
 - `logistic_function(z)`: Compute the logistic function.
 
 - `logistic_loss(y, tx, w, lambda_)`: Compute the logistic loss.
 
-- `logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=False)`: 
+- `logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=False)`: Find the optimal weights with respect to the logistic regression.
 
 - `reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreasing_gamma=False)`: Regularized logistic regression Stochastic Gradient Descent
 
 - `batch_iter(y, tx, batch_size, num_batches=1, shuffle=True)`: Generate a minibatch iterator for a dataset with `batch_size` data points.
 
 ## Parameters
-If you want to tweak the parameters, param.py file will be your best friend since it is the control tower of this project.
+If you want to tweak the parameters, `params.py` file will be your best friend since it is the control tower of this project.
 
 ### *Preprocessing*
 
@@ -81,21 +81,21 @@ If you want to tweak the parameters, param.py file will be your best friend sinc
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - **`ADDITIONAL_SPLITTING - boolean`**: Set as True if you want to split each of the 3 or 4 groups into 2 additional groups based on the appearance of **`UNWANTED_VALUE`**, False otherwise.
 
-- **`REMOVE_INV_FEATURES - boolean`**: Set as True if you want to remove all the invariable features, i.e the features having the same value for every data points, False otherwise.
+- **`REMOVE_INV_FEATURES - boolean`**: Set as True if you want to remove all the invariable features, i.e. the features having the same value for every data points, False otherwise.
 
 - **`REPLACE_UNWANTED_VALUE - boolean`**: Set as True if you want to replace each occurence of the **`UNWANTED_VALUE`** by the mean or the median of the remaining values (according to **`VALUE`**) in each feature, False otherwise.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - **`VALUE - string`**: Set to `mean` or `median` if you want the **`UNWANTED_VALUE`** occurences to be replaced by the mean or the median of the other values of that feature.
 
-- **`STD - boolean`**: Set as True if you want to standardize each feature, i.e subtract the mean of the feature to every value, and divide them by the standard deviation of that feature, False otherwise.
+- **`STD - boolean`**: Set as True if you want to standardize each feature, i.e. subtract the mean of the feature to every value, and divide them by the standard deviation of that feature, False otherwise.
 
 - **`REPLACE_OUTLIER - boolean`**: Set as True if you want to replace the outliers by a more coherent value, False otherwise.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - **`OUTLIER_VALUE - string`**: Set to `clip`, `mean`, or `upper_lower_mean` if you want the outliers to be replaced by the thresholds (= ± **`THRESHOLD`*** σ<sub>feature</sub>), the mean, or the upper-lower means (mean of all the other values above the global mean, and same for the values below) of the other values of that feature.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - **`THRESHOLD - float`**: (alpha symbol in the project report) Set to a positive value that will determine the outliers, i.e values outside the range [-**`THRESHOLD`*** σ<sub>feature</sub> , **`THRESHOLD`*** σ<sub>feature</sub>].
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - **`THRESHOLD - float`**: (alpha symbol in the project report) Set to a positive value that will determine the outliers, i.e. values outside the range [-**`THRESHOLD`*** σ<sub>feature</sub> , **`THRESHOLD`*** σ<sub>feature</sub>].
 
-- **`REMOVE_DUPLICATE_FEATURES - boolean`**: Set as True if you only want to keep the unique features, i.e remove the duplicates (recommended), False otherwise.
+- **`REMOVE_DUPLICATE_FEATURES - boolean`**: Set as True if you only want to keep the unique features, i.e. remove the duplicates (recommended), False otherwise.
 
 ### *Feature engineering*
 
@@ -159,25 +159,25 @@ If you want to tweak the parameters, param.py file will be your best friend sinc
 
 All the preprocessing functions are in `preprocessing.py`.
 
-Refer to the pdf report for further details.
+Refer to the **pdf report** for further details.
 
 ## Feature engineering
 
 All the feature engineering functions are in `feature_engineering.py`.
 
-Refer to the pdf report for further details.
+Refer to the **pdf report** for further details.
 
 ## Local prediction
 
 All the prediction functions are in `local_prediction.py`.
 
-Refer to the pdf report for further details.
+Refer to the **pdf report** for further details.
 
 
 ## Further improvements
 - One could try to standardize the features of the test set with the same means and standard-deviations than the ones used in the training set.
-- One could try different methods of normalization/standardization for the features, e.g min-max-normalization etc.
-- One could also try to do the feature expansion with an array of degrees, e.g `[2, 4, 5]` to find the best combination of polynomial expansions without overfitting.
+- One could try different methods of normalization/standardization for the features, e.g. min-max-normalization etc.
+- One could also try to do the feature expansion with an array of degrees, e.g. `[2, 4, 5]` to find the best combination of polynomial expansions without overfitting.
 
 
 ## Ackowledgements

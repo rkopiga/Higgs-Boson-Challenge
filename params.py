@@ -60,9 +60,9 @@ ADD_SIN2 = False
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
-LOCAL_PREDICTION = False
+LOCAL_PREDICTION = True
 RATIO = 8/10
-CROSS_VALIDATION = False
+CROSS_VALIDATION = True
 K = 5
 
 # Implementations parameters -------------------------------------------------------------------------------------------
