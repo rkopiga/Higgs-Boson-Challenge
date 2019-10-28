@@ -1,11 +1,26 @@
 # -*- coding: utf-8 -*-
-"""some helper functions for project 1."""
+"""
+Some helper functions for project 1.
+"""
 
 import csv
 import numpy as np
 
 
 def flatten_list(list_to_flatten):
+    """
+    Flatten the given list.
+
+    Parameters
+    ----------
+    list_to_flatten: list
+        The list to flatten
+
+    Returns
+    -------
+    flat_list: list
+        The flattened list
+    """
     flat_list = []
     for sublist in list_to_flatten:
         for item in sublist:
@@ -14,12 +29,39 @@ def flatten_list(list_to_flatten):
 
 
 def remove_duplicate_columns(tX):
+    """
+    Remove the duplicate features, i.e the columns having the same values in tX.
+
+    Parameters
+    ----------
+    tX: array
+        The features matrix
+
+    Returns
+    -------
+    new_tX: array
+
+    """
     features = tX.T
     new_features, indices = np.unique(features, return_inverse=True, axis=0)
-    return new_features.T
+    new_tX = new_features.T
+    return new_tX
 
 
 def remove_duplicate_columns_grouped(tX_grouped):
+    """
+    Remove the duplicate features, i.e the columns having the same values in tX, in each group.
+
+    Parameters
+    ----------
+    tX_grouped: list
+        The list of features matrices
+
+    Returns
+    -------
+    new_tX_grouped: list
+        The new list of features matrices
+    """
     new_tX = []
     for i in range(len(tX_grouped)):
         new_tX.append(remove_duplicate_columns(tX_grouped[i]))
@@ -27,7 +69,25 @@ def remove_duplicate_columns_grouped(tX_grouped):
 
 
 def load_csv_data(data_path, sub_sample=False):
-    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
+    """
+    Load data and returns y (class labels), tX (features) and ids (event ids)
+
+    Parameters
+    ----------
+    data_path: str
+        The path to the dataset
+    sub_sample: boolean
+        Rather we only want a small chunk of data from the dataset (50 data points)
+
+    Returns
+    -------
+    yb: array
+        The labels
+    input_data: array
+        The features matrix
+    ids: array
+        The ids of the data points
+    """
     print('\tLoading data...')
 
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -50,8 +110,26 @@ def load_csv_data(data_path, sub_sample=False):
 
 
 def predict_labels(weights, data, implementation):
-    """Generates class predictions given weights, and a test data matrix
-    Returns the actual computed values of y, and the classification version"""
+    """
+    Generate class predictions given weights, and a test data matrix.
+    Return the actual computed values of y, and the classification version
+
+    Parameters
+    ----------
+    weights: array
+        The previously computed weights
+    data: array
+        The data on which we want to predict the labels
+    implementation: int
+        The used implementation (0, 1, 2, ...)
+
+    Returns
+    -------
+    y_pred: array
+        The labels before clipping to 1 and -1
+    y_pred_clipped: array
+        The labels clipped to 1 and -1
+    """
     if implementation == 2:
         temp = np.dot(data, weights)
         y_pred = np.exp(temp) / (1 + np.exp(temp))
@@ -66,6 +144,25 @@ def predict_labels(weights, data, implementation):
 
 
 def predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation):
+    """
+    Generate class predictions given weights, and a test data matrix, for each group.
+
+    Parameters
+    ----------
+    optimal_ws: list
+        The previously computed weights for each group
+    tX_sub_test_grouped: list
+        The list of datas on which we want to predict the labels
+    implementation: int
+        The used implementation (0, 1, 2, ...)
+
+    Returns
+    -------
+    y_pred_grouped: list
+        The labels before clipping to 1 and -1 for each group
+    y_pred_clipped_grouped: list
+        The labels clipped to 1 and -1 for each group
+    """
     y_pred_grouped = []
     y_pred_clipped_grouped = []
     for i in range(len(optimal_ws)):
@@ -77,10 +174,20 @@ def predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation):
 
 def create_csv_submission(ids, y_pred, name):
     """
-    Creates an output file in csv format for submission to kaggle
-    Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
+    Creates an output file in csv format for submission to Aicrowd
+
+    Parameters
+    ----------
+    ids: array
+        Event ids associated with each prediction
+    y_pred: array
+        Predicted class labels
+    name: str
+        The name of the csv file
+
+    Returns
+    -------
+    None
     """
     with open(name, 'w') as csvfile:
         fieldnames = ['Id', 'Prediction']

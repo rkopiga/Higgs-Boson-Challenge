@@ -15,27 +15,39 @@ INITIAL_FEATURE_COLUMN = 30
 
 # Preprocessing parameters ---------------------------------------------------------------------------------------------
 SHUFFLE_DATA = True
+
 REMOVE_PHIS = True
+
 GROUP_1 = False
 GROUP_2 = True
 LESS_GROUPS = False
-GROUPS_TO_MERGE = [2, 3]
 GROUP_2_ADDITIONAL_SPLITTING = True
-GROUP = GROUP_1 or GROUP_2
+
 REMOVE_INV_FEATURES = True
+
 REPLACE_UNWANTED_VALUE = True
 VALUE = 'median'  # possible values: median, mean
+
 STD = True
+
 REPLACE_OUTLIERS = True
 OUTLIER_VALUE = 'clip'  # possible values: clip, mean, upper_lower_mean
 THRESHOLD = 1.5
+
 REMOVE_DUPLICATE_FEATURES = False
+
+# /!\ DO NOT CHANGE VALUES BELOW /!\
+GROUPS_TO_MERGE = [2, 3]
+GROUP = GROUP_1 or GROUP_2
+# /!\ -------------------------- /!\
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
 DEGREE = 3
+
 FEATURE_MULTIPLICATION = True
 TRIPLE_MULTIPLICATION = False
+
 ADD_COS = False
 ADD_SIN = True
 ADD_TAN = False  # Not good
@@ -44,6 +56,7 @@ ADD_LOG = False
 ADD_SQRT = False
 ADD_COS2 = False
 ADD_SIN2 = False
+
 ONE_COLUMN = True
 
 # Local prediction parameters ------------------------------------------------------------------------------------------
@@ -58,6 +71,9 @@ K = 3
 # 2 = Logistic-regression
 IMPLEMENTATION = 1
 
+# Ridge-regression parameters
+RIDGE_LAMBDA = 0.000000001
+
 # Logistic-regression parameters
 MAX_ITERS = 30
 GAMMA = 0.05
@@ -65,19 +81,11 @@ DECREASING_GAMMA = True
 r = 0.5  # Between 0.5 and 1
 LOG_LAMBDA = 0.000000001
 
-# Ridge-regression parameters
-# RIDGE_LAMBDA = 0.000000001
-# RIDGE_LAMBDA = 0.0001
-# RIDGE_LAMBDA = 0.0000001
-# RIDGE_LAMBDA = 0.00000001
-RIDGE_LAMBDA = 0.00000001
-
 
 # TODO add arguments to the function to be able to put it at the beginning of locally_predict
 def print_parameters():
     print('----- Preprocessing parameters -----\n')
     print('REMOVE_PHIS = {}'.format(REMOVE_PHIS))
-    print('ADD_DIFF_PHIS = {}'.format(ADD_DIFF_PHIS))
     print('GROUP_1 = {}'.format(GROUP_1))
     print('GROUP_2 = {}'.format(GROUP_2))
     if GROUP_2:
