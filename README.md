@@ -10,7 +10,7 @@ The only allowed library was numpy.
 
 **Results**: 
 
-- 8th team over TODO on AIcrowd
+- 8th team over 226 on AIcrowd
 - Categorical accuracy: 0.837
 - F1-Score: 0.754
 
@@ -38,7 +38,31 @@ Python, Numpy
 
 ## Implementations
 
-TODO
+- `gamma_function(step, r=params.r)`: Gamma function returning a gamma decreasing with the step number, according to the parameter `r` in `params.py`.
+
+- `mean_square_error(y, tx, w)`: Mean Squared Error (MSE)
+
+- `mean_absolute_error(y, tx, w)`: Mean Absolute Error (MAE)
+
+- `least_squares_GD(y, tx, initial_w, max_iters, gamma)`: Least-squares Gradient Descent
+
+- `least_squares_SGD(y, tx, initial_w, max_iters, gamma)`: Least-squares Stochastic Gradient Descent
+
+- `compute_stoch_gradient(y, tx, w)`: Randomly select a data point and compute its gradient.
+
+- `least_squares(y, tx)`: Least-squares with direct resolution (Normal Equations)
+
+- `ridge_regression(y, tx, lambda_)`: Ridge regression with direct resolution (Normal Equations)
+
+- `logistic_function(z)`: Compute the logistic function.
+
+- `logistic_loss(y, tx, w, lambda_)`: Compute the logistic loss.
+
+- `logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=False)`: 
+
+- `reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreasing_gamma=False)`: Regularized logistic regression Stochastic Gradient Descent
+
+- `batch_iter(y, tx, batch_size, num_batches=1, shuffle=True)`: Generate a minibatch iterator for a dataset with `batch_size` data points.
 
 ## Parameters
 If you want to tweak the parameters, param.py file will be your best friend since it is the control tower of this project.
@@ -133,24 +157,29 @@ If you want to tweak the parameters, param.py file will be your best friend sinc
 
 ## Preprocessing
 
-All the preprocessing functions are in preprocessing.py.
+All the preprocessing functions are in `preprocessing.py`.
+
+Refer to the pdf report for further details.
 
 ## Feature engineering
 
-All the feature engineering functions are in feature_engineering.py.
+All the feature engineering functions are in `feature_engineering.py`.
+
+Refer to the pdf report for further details.
 
 ## Local prediction
 
-All the prediction functions are in local_prediction.py.
+All the prediction functions are in `local_prediction.py`.
+
+Refer to the pdf report for further details.
 
 
 ## Further improvements
-- diff de phi
-- Autres types de normlisation/std
-- Standardiser le test set avec les mêmes means et les mêmes std que le train set
-- Feature expansion avec une array de degrés
+- One could try to standardize the features of the test set with the same means and standard-deviations than the ones used in the training set.
+- One could try different methods of normalization/standardization for the features, e.g min-max-normalization etc.
+- One could also try to do the feature expansion with an array of degrees, e.g `[2, 4, 5]` to find the best combination of polynomial expansions without overfitting.
 
 
 ## Ackowledgements
 
-Thank you to Martin Jaggi, Rüdiger Urbanke, and all the EPFL Machine Learning team for this vers interesting project!
+Thank you to **Martin Jaggi**, **Rüdiger Urbanke**, and all the EPFL Machine Learning team for this vers interesting project!
