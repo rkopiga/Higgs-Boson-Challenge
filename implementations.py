@@ -4,7 +4,23 @@ import proj1_helpers as helper
 
 
 def gamma_function(step, r=params.r):
-    return 1/(step+1)**r
+    """
+    Decreases the gamma according to a step value
+    
+    Parameters
+    ----------
+    step: integer
+        The step value
+    r: integer
+        The exponent value
+        
+    Return
+    ------
+    gamma: float
+        gamma value
+    """
+    gamma = 1/(step+1)**r
+    return gamma
 
 
 def mean_square_error(y, tx, w):
@@ -73,6 +89,12 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         The outputs
     tx: array
         The inputs
+    initial_w: array
+        The initial weights vector
+    max_inters:
+        Maximal number of iteration
+    gamma: 
+        The step parameter
 
     Return
     -------
@@ -99,6 +121,12 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
         The outputs
     tx: array
         The inputs
+    initial_w: array
+        The initial weights vector
+    max_iters: integer
+        Maximal number of iteration
+    gamma: float
+        The step parameter
 
     Return
     -------
@@ -129,6 +157,8 @@ def compute_stoch_gradient(y, tx, w):
         The outputs
     tx: array
         The inputs
+    w: array
+        The weights
 
     Return
     -------
@@ -244,14 +274,16 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreas
         The outputs
     tx: array
         The inputs
-    lambda_:
+    lambda_: float
         define value of regulator in cost function
     initial_w: vector
         Initial value of weights
-    max_iters: scalar
+    max_iters: integer
         maximum number of iteration
-    gamma: scalar
+    gamma: float
         define step size of gradient descent
+    decreasing_gamma: boolean
+        define whether to use decreasing gamma over the iteration or not
     
     
     Return
@@ -285,12 +317,14 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=Fal
         The outputs
     tx: array
         The inputs
-    initial_w: vector
+    initial_w: array
         Initial value of weights
-    max_iters: scalar
+    max_iters: float
         maximum number of iteration
-    gamma: scalar
+    gamma: float
         define step size of gradient descent
+    decreasing_gamma: boolean
+        define whether to use decreasing gamma over the iteration or not
     
     Return
     -------
