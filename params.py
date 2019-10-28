@@ -43,7 +43,7 @@ GROUP = GROUP_1 or GROUP_2
 
 # Feature engineering parameters ---------------------------------------------------------------------------------------
 FEATURE_EXPANSION = False
-DEGREE = 3
+DEGREE = 2
 
 FEATURE_MULTIPLICATION = True
 TRIPLE_MULTIPLICATION = False

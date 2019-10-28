@@ -16,7 +16,7 @@ def flatten_list(list_to_flatten):
     list_to_flatten: list
         The list to flatten
 
-    Returns
+    Return
     -------
     flat_list: list
         The flattened list
@@ -37,7 +37,7 @@ def remove_duplicate_columns(tX):
     tX: array
         The features matrix
 
-    Returns
+    Return
     -------
     new_tX: array
 
@@ -57,7 +57,7 @@ def remove_duplicate_columns_grouped(tX_grouped):
     tX_grouped: list
         The list of features matrices
 
-    Returns
+    Return
     -------
     new_tX_grouped: list
         The new list of features matrices
@@ -79,7 +79,7 @@ def load_csv_data(data_path, sub_sample=False):
     sub_sample: boolean
         Rather we only want a small chunk of data from the dataset (50 data points)
 
-    Returns
+    Return
     -------
     yb: array
         The labels
@@ -123,7 +123,7 @@ def predict_labels(weights, data, implementation):
     implementation: int
         The used implementation (0, 1, 2, ...)
 
-    Returns
+    Return
     -------
     y_pred: array
         The labels before clipping to 1 and -1
@@ -156,7 +156,7 @@ def predict_labels_grouped(optimal_ws, tX_sub_test_grouped, implementation):
     implementation: int
         The used implementation (0, 1, 2, ...)
 
-    Returns
+    Return
     -------
     y_pred_grouped: list
         The labels before clipping to 1 and -1 for each group
@@ -185,7 +185,7 @@ def create_csv_submission(ids, y_pred, name):
     name: str
         The name of the csv file
 
-    Returns
+    Return
     -------
     None
     """

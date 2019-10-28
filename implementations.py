@@ -22,9 +22,10 @@ def mean_square_error(y, tx, w):
 
     Return
     -------
-    (loss, loss_gradient): (scalar, scalar)
-        the loss computed according to the mean square,
-        the gradient of the loss according to the weights w
+    loss: float
+        the loss computed according to the mean sqaure
+    loss_gradient: float
+        the gradient of the loss
       
     """    
     e = y - tx @ w
@@ -49,8 +50,9 @@ def mean_absolute_error(y, tx, w):
 
     Return
     -------
-    (loss, loss_gradient): (scalar, scalar) 
-        the loss computed according to the mean absolute,
+    loss: float
+        the loss computed according to the mean absolute
+    loss_gradient: float
         the gradient of the loss
         
     """

@@ -42,8 +42,7 @@ def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=p
         
     Return
     ------
-    
-    Either does a cross validation on given dataset and parameters or not. In both cases, displays the accuracy on local.
+    accuarcy: float or list
     """    
     if group:
         if cross_validation:
@@ -85,8 +84,14 @@ def separate_data(tX, y, ratio):
     Return
     ------
     
-    (tX_train, y_train, tX_sub_test, y_sub_test): array
-        The data matrix and the output separated according to training set and test set.
+    tX_train: array
+        The training set
+    y_train: array
+        The training label set 
+    tX_sub_test: array
+        The test set
+    y_sub_test: array
+        The test label set
     """    
     index = int(len(y) * ratio)
     tX_train = tX[:index]
@@ -113,8 +118,14 @@ def separate_data_grouped(tX_grouped, y_grouped, ratio):
     Return
     ------
     
-    (tX_train_grouped, y_train_grouped, tX_sub_test_grouped, y_sub_test_grouped): list
-        List of data matrices and outputs separated according to training set and test set.
+    tX_train_grouped: list 
+        The training sets according to groups
+    y_train_grouped: list
+        The training label sets according to groups 
+    tX_sub_test_grouped: list
+        The testing set according to groups
+    y_sub_test_grouped: list
+        The testing label set according to groups
     """    
     tX_train_grouped = []
     y_train_grouped = []

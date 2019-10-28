@@ -430,7 +430,7 @@ def add_sinus_2(tX):
 
 def add_sinus_2_grouped(tX_grouped):
     """
-    Computes add_sinus_2 of a list of data matrices.  
+    Compute add_sinus_2 of a list of data matrices.  
         
     Parameters
     ----------
@@ -502,7 +502,8 @@ def add_exponential(tX):
         Matrix with the exponential of each feature appended to the input matrix.
     """        
     new_tX = tX
-    return np.hstack((tX, np.exp(new_tX)))
+    new_tX = np.hstack((tX, np.exp(new_tX)))
+    return new_tX
 
 
 def add_exponential_grouped(tX_grouped):
@@ -536,14 +537,15 @@ def add_logarithm(tX):
     
     Return
     ------
-    new_tX: array   
+    return_tX: array   
         Matrix with the logarithm of each feature appended to the input matrix.
     """         
     new_tX = tX.T
     minimum_by_feature = np.reshape(np.abs(np.min(new_tX, axis=1))+1, [new_tX.shape[0], 1])
     new_tX += minimum_by_feature
     logarithms = np.log(new_tX.T)
-    return np.hstack((tX, logarithms))
+    return_tX =  np.hstack((tX, logarithms))
+    return return_tX
 
 
 def add_logarithm_grouped(tX_grouped):
