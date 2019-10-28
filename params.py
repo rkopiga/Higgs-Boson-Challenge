@@ -63,7 +63,7 @@ ONE_COLUMN = True
 LOCAL_PREDICTION = False
 RATIO = 8/10
 CROSS_VALIDATION = False
-K = 3
+K = 5
 
 # Implementations parameters -------------------------------------------------------------------------------------------
 # 0 = Least-squares
