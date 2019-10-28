@@ -74,7 +74,7 @@ def preprocess(
     remove_duplicate_features: boolean
         Rather we remove the duplicate features at the end or not
 
-    Returns
+    Return
     -------
     y: list/array
         The labels (with groups or not)
@@ -149,7 +149,7 @@ def check_uniqueness_in_group(tX_grouped, unwanted_value):
     unwanted_value: int
         The value based on which we will say if we can split the groups even more
 
-    Returns
+    Return
     -------
     None
     """
@@ -178,7 +178,7 @@ def shuffle_data(y, tX, ids):
     ids: array
         The ids of the data points
 
-    Returns
+    Return
     -------
     y_shuffled: array
         The labels shuffled
@@ -206,7 +206,7 @@ def handle_angle_phis(tX):
     tX: array
         The features matrix
 
-    Returns
+    Return
     -------
     new_tX: array
         The new features matrix
@@ -237,7 +237,7 @@ def extract_from_dataset(y, tX, ids, condition, y_grouped, tX_grouped, ids_group
     ids: array
         The grouped data points' ids list to append the next group to
 
-    Returns
+    Return
     -------
     y_grouped: list
         The labels grouped
@@ -271,7 +271,7 @@ def split_in_groups_1(y, tX, ids, unwanted_value):
     unwanted_value:
         The value according to which we form the groups
 
-    Returns
+    Return
     -------
     y_grouped: list
         The labels grouped
@@ -314,7 +314,7 @@ def split_in_groups_2(y, tX, ids, pri_jet_num_index, less_groups=False):
     less_groups: boolean
         Rather we form 3 groups instead of 4 (by merging the last 2)
 
-    Returns
+    Return
     -------
     y_grouped: list
         The labels grouped
@@ -379,7 +379,7 @@ def additional_splitting(y_grouped, tX_grouped, ids_grouped, unwanted_value):
     unwanted_value:
         The value according to which we form the groups
 
-    Returns
+    Return
     -------
     y_grouped_new: list
         The labels grouped
@@ -419,7 +419,7 @@ def replace_unwanted_value_by_value(tX, unwanted_value, value):
     value: str
         Indicating with which value to replace the UNWANTED_VALUE (mean or median)
 
-    Returns
+    Return
     -------
     new_tX: array
         The new features matrix
@@ -446,7 +446,7 @@ def replace_unwanted_value_by_value_grouped(tX_grouped, unwanted_value, value):
     value: str
         Indicating with which value to replace the UNWANTED_VALUE (mean or median)
 
-    Returns
+    Return
     -------
     new_tX: list
         The new list of features matrices
@@ -468,7 +468,7 @@ def remove_invariable_features(tX):
     tX: array
         The features matrix
 
-    Returns
+    Return
     -------
     new_tX: array
         The new features matrix
@@ -489,7 +489,7 @@ def remove_invariable_features_grouped(tX_grouped):
     tX_grouped: list
         The list of features matrices
 
-    Returns
+    Return
     -------
     tX_clean: list
        The cleaned list of features matrices
@@ -510,7 +510,7 @@ def standardize(tX):
     tX: array
         The features matrix
 
-    Returns
+    Return
     -------
     new_tX: array
         The new features matrix
@@ -532,7 +532,7 @@ def standardize_grouped(tX_grouped):
     tX_grouped: list
         The list of features matrices
 
-    Returns
+    Return
     -------
     tX_clean_std: list
        The new list of features matrices standardized
@@ -555,7 +555,7 @@ def replace_outliers_by_threshold(tX, threshold, outlier_value):
     threshold: float
         The parameter that defines how the value should be close to the mean
     
-    Returns
+    Return
     -------
     tX: array
         The new features matrix with less outliers
@@ -605,7 +605,7 @@ def replace_outliers_grouped(tX_grouped, threshold, outlier_value):
     threshold: float
         The parameter that defines how the value should be close to the mean
 
-    Returns
+    Return
     -------
     tX_grouped: list
         The new features matrix with less outliers

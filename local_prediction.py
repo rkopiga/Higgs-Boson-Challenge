@@ -9,7 +9,8 @@ import implementations as impl
 def locally_predict(tX, y, counts, implementation=params.IMPLEMENTATION, group=params.GROUP, ratio=params.RATIO,
                     cross_validation=params.CROSS_VALIDATION, k=params.K, max_iter=params.MAX_ITERS, gamma=params.GAMMA,
                     decreasing_gamma=params.DECREASING_GAMMA, log_lambda=params.LOG_LAMBDA, ridge_lambda=params.RIDGE_LAMBDA):
-    """ Predicts locally the accruacy of a model according to various parameters.
+    """ 
+    Predict locally the accruacy of a model according to various parameters.
     
     Parameters
     ----------
@@ -97,7 +98,7 @@ def separate_data(tX, y, ratio):
 
 def separate_data_grouped(tX_grouped, y_grouped, ratio):
     """
-    Performs separate_data on a list of dataset
+    Perform separate_data on a list of dataset
     
     Parameters 
     ----------
@@ -208,7 +209,7 @@ def find_optimal_ws_grouped(tX_grouped, y_grouped, implementation, log_initial_w
 
 def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, group_number=0):
     """
-    Compared the labels from test set to the one issued with the optimal weights found
+    Compare the labels from test set to the one issued with the optimal weights found
     
     Parameters 
     ----------
@@ -242,7 +243,7 @@ def compare_labels(y_pred, y_pred_clipped, y_sub_test, implementation, count, gr
 
 def compare_labels_grouped(y_pred_grouped, y_pred_clipped_grouped, y_sub_test_grouped, implementation, counts):
     """
-    Performs compage_labels of a list of data matrices
+    Perform compage_labels of a list of data matrices
     
     Parameters 
     ----------

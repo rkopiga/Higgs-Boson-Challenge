@@ -20,7 +20,7 @@ def mean_square_error(y, tx, w):
     w: array
         The weight vector
 
-    Returns
+    Return
     -------
     (loss, loss_gradient): (scalar, scalar)
         the loss computed according to the mean square,
@@ -47,7 +47,7 @@ def mean_absolute_error(y, tx, w):
     w: array
         The weight vector
 
-    Returns
+    Return
     -------
     (loss, loss_gradient): (scalar, scalar) 
         the loss computed according to the mean absolute,
@@ -72,10 +72,11 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     tx: array
         The inputs
 
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss: float
         and the corresponding loss value (cost function)
     """     
     w = initial_w
@@ -97,10 +98,11 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     tx: array
         The inputs
 
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss: float  
         and the corresponding loss value (cost function)
     """     
     w_temp = initial_w
@@ -126,11 +128,12 @@ def compute_stoch_gradient(y, tx, w):
     tx: array
         The inputs
 
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
-        and the corresponding loss value (cost function)
+     grad: array
+        gradient of loss function
+     e: array
+        error between our model and the label
     """ 
         
     e = y - tx.dot(w)
@@ -149,10 +152,11 @@ def least_squares(y, tx):
     tx: array
         The inputs
 
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss:    
         and the corresponding loss value (cost function)
     """     
     tx_T = tx.T
@@ -174,10 +178,11 @@ def ridge_regression(y, tx, lambda_):
     lambda_: scalar
         The regularizer
 
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss: array
         and the corresponding loss value (cost function)
     """
     gamma_prime = 2 * tx.shape[0] * lambda_
@@ -190,13 +195,13 @@ def ridge_regression(y, tx, lambda_):
 
 def logistic_function(z):
     """
-    Computes logistic function of scalar or array
+    Compute logistic function of scalar or array
     
     Parameter
     ---------
     z: scalar or array
     
-    Returns
+    Return
     -------
     logistic_value:
         the value returned by the sigmoid function evaluated on z 
@@ -207,7 +212,7 @@ def logistic_function(z):
 
 def logistic_loss(y, tx, w, lambda_):
     """
-    Computes loss using logistic cost function with regularizer
+    Compute loss using logistic cost function with regularizer
     
     Parameters
     ----------
@@ -220,7 +225,7 @@ def logistic_loss(y, tx, w, lambda_):
     lambda_:
         define value of regularizer in cost function
     
-    Returns
+    Return
     -------
     value of cost function: scalar
     """
@@ -247,10 +252,11 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, decreas
         define step size of gradient descent
     
     
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss: array
         and the corresponding loss value (cost function)
     
     Recommended values: gamma = 0.05, max_iters = 20-25, regulator = 1 with standardized data
@@ -284,10 +290,11 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, decreasing_gamma=Fal
     gamma: scalar
         define step size of gradient descent
     
-    Returns
+    Return
     -------
-    (w, loss):
-        the last weight vector of the method, 
+    w: array
+        the last weight vector of the method
+    loss: array
         and the corresponding loss value (cost function)
     
     Recommended values: gamma = 0.5, max_iters = 40 with standardized data

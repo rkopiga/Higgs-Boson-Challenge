@@ -146,7 +146,7 @@ def build_poly(x, degree):
     degree: scalar
         The maximal degree
     
-    Returns
+    Return
     -------
     a: array   
         matrix with x raised to the power from 2 to degree
@@ -167,7 +167,7 @@ def feature_expansion(tX, degree):
     degree: scalar
         The maximal degree up to which we will raise the feature to power of
     
-    Returns
+    Return
     -------
     tX: array   
         data matrix with the features expanded on a polynomial basis
@@ -190,7 +190,7 @@ def feature_expansion_grouped(tX_grouped, degree):
     degree: scalar
         maximal degree up to which we will raise the feature to power of
     
-    Returns
+    Return
     -------
     tX_expanded: list of array   
         list of data matrices with expanded features.
@@ -210,7 +210,7 @@ def feature_multiplication(tX,triple_multiplication):
     tX: array
         The input data matrix
     
-    Returns
+    Return
     -------
     new_tX: array   
         The data matrix to which the features multiplied to each other are appended.
@@ -240,7 +240,7 @@ def feature_multiplication_grouped(tX_grouped, triple_multiplication):
         will be multiplied to each other.
 
     
-    Returns
+    Return
     -------
     new_tX_grouped: list of array   
         list of data matrices with expanded features.
@@ -272,9 +272,9 @@ def feature_triple_multiplication(tX,tX_column_size):
         The input data matrix
     tX_column_size: integer
         
-    Returns
+    Return
     -------
-    new_tX : array
+    new_tX: array
         Matrix with the features of the input matrix,to which the multiplication up to degree of features are appended.
     """
     basic_features = tX[:,:tX_column_size]
@@ -294,30 +294,34 @@ def feature_triple_multiplication(tX,tX_column_size):
 
 def add_cosinus(tX):
     """
-    Computes the cosinus of each features and append them to the data matrix.  
+    Compute the cosinus of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Matrix with the cosinus of each feature appended to the input matrix.
     """
     new_tX = tX
-    return np.hstack((tX, np.cos(new_tX)))
+    new_tX = np.hstack((tX, np.cos(new_tX))) 
+    return new_tX
 
 
 def add_cosinus_grouped(tX_grouped):
     """
-    Computes add_cosinus of a list of data matrices.  
+    Compute add_cosinus of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with cosinus-expansion.
     """      
@@ -329,31 +333,34 @@ def add_cosinus_grouped(tX_grouped):
 
 def add_cosinus_2(tX):
     """
-    Computes the square of cosinus of each features and append them to the data matrix.  
+    Compute the square of cosinus of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns:
-    new_tX: array   
+    Return
+    -------
+    new_tX array   
         Matrix with the square of cosinus computed on of each feature appended to the input matrix.
     """    
     new_tX = tX
-    return np.hstack((tX, np.cos(new_tX)**2))
+    new_tX = np.hstack((tX, np.cos(new_tX)**2))
+    return new_tX
 
 
 def add_cosinus_2_grouped(tX_grouped):
     """
-    Computes add_cosinus_2 of a list of data matrices.  
+    Compute add_cosinus_2 of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         list of matrices with the cosinus squared expansion.
     """    
@@ -365,30 +372,34 @@ def add_cosinus_2_grouped(tX_grouped):
 
 def add_sinus(tX):
     """
-    Computes the sinus of each features and append them to the data matrix.  
+    Compute the sinus of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Matrix with the sinus of each feature appended to the input matrix.
     """    
     new_tX = tX
-    return np.hstack((tX, np.sin(new_tX)))
+    new_tX = np.hstack((tX, np.sin(new_tX)))
+    return new_tX
 
 
 def add_sinus_grouped(tX_grouped):
     """
-    Computes add_sinus of a list of data matrices.  
+    Compute add_sinus of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         list of matrices with sinus-expansion.
     """     
@@ -400,18 +411,21 @@ def add_sinus_grouped(tX_grouped):
 
 def add_sinus_2(tX):
     """
-    Computes the square of sinus of each features and append them to the data matrix.  
+    Compute the square of sinus of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Matrix with the square of sinus computed on of each feature appended to the input matrix.
     """        
     new_tX = tX
-    return np.hstack((tX, np.sin(new_tX)**2))
+    new_tX = np.hstack((tX, np.sin(new_tX)**2))
+    return new_tX
 
 
 def add_sinus_2_grouped(tX_grouped):
@@ -423,7 +437,8 @@ def add_sinus_2_grouped(tX_grouped):
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         list of matrices with the sinus squared expansion.
     """        
@@ -435,30 +450,34 @@ def add_sinus_2_grouped(tX_grouped):
 
 def add_tangent(tX):
     """
-    Computes the tangent of each features and append them to the data matrix.  
+    Compute the tangent of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Matrix with the tangent of each feature appended to the input matrix.
     """    
     new_tX = tX
-    return np.hstack((tX, np.tan(new_tX)))
+    new_tX = np.hstack((tX, np.tan(new_tX)))
+    return new_tX
 
 
 def add_tangent_grouped(tX_grouped):
     """
-    Computes add_tangent of a list of data matrices.  
+    Compute add_tangent of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with tangent-expansion.
     """        
@@ -470,14 +489,15 @@ def add_tangent_grouped(tX_grouped):
 
 def add_exponential(tX):
     """
-    Computes the exponential of each features and append them to the data matrix.  
+    Compute the exponential of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns:
+    Return
+    ------
     new_tX: array   
         Matrix with the exponential of each feature appended to the input matrix.
     """        
@@ -487,14 +507,15 @@ def add_exponential(tX):
 
 def add_exponential_grouped(tX_grouped):
     """
-    Computes add_exponential of a list of data matrices.  
+    Compute add_exponential of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with exponential expansion.
     """    
@@ -506,14 +527,16 @@ def add_exponential_grouped(tX_grouped):
 
 def add_logarithm(tX):
     """
-    Computes the logarithm of each features and append them to the data matrix.  
+    Compute the logarithm of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Matrix with the logarithm of each feature appended to the input matrix.
     """         
     new_tX = tX.T
@@ -525,14 +548,15 @@ def add_logarithm(tX):
 
 def add_logarithm_grouped(tX_grouped):
     """
-    Computes add_logarithm of a list of data matrices.  
+    Compute add_logarithm of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with logarithm expansion.
     """        
@@ -544,33 +568,37 @@ def add_logarithm_grouped(tX_grouped):
 
 def add_square_root(tX):
     """
-    Computes the square root of each features and append them to the data matrix.  
+    Compute the square root of each features and append them to the data matrix.  
         
     Parameters
     ----------
     tX: array
         The input data matrix. 
     
-    Returns: array
+    Return
+    ------
+    return_tX: array
         Matrix with the square root of each feature appended to the input matrix.
     """    
     new_tX = tX.T
     minimum_by_feature = np.reshape(np.abs(np.min(new_tX, axis=1)), [new_tX.shape[0], 1])
     new_tX += minimum_by_feature
     square_roots = np.sqrt(new_tX.T)
-    return np.hstack((tX, square_roots))
+    return_tX = np.hstack((tX, square_roots)) 
+    return return_tX
 
 
 def add_square_root_grouped(tX_grouped):
     """
-    Computes add_square_root of a list of data matrices.  
+    Compute add_square_root of a list of data matrices.  
         
     Parameters
     ----------
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with square root expansion.
     """        
@@ -589,12 +617,15 @@ def add_ones_column(tX):
     tX: array 
         The input data matrix. 
     
-    Returns: array   
+    Return
+    ------
+    new_tX: array   
         Input matrix with one column of 1 append.
     """    
     len_tX = len(tX)
     ones = np.reshape(np.ones(len_tX), [len_tX, 1])
-    return np.hstack((ones, tX))
+    new_tX = np.hstack((ones, tX))
+    return new_tX
 
 
 def add_ones_column_grouped(tX_grouped):
@@ -606,7 +637,8 @@ def add_ones_column_grouped(tX_grouped):
     tX_grouped: list 
         The list of data matrices. 
     
-    Returns:
+    Return
+    ------
     tX_grouped_new: list   
         List of matrices with logarithm expansion.
     """        
